@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Moment Troc · Studio</title>
+    <style>
+        :root {
+            --bg: #080808; --surface: #0F0F0F; --surface2: #141414;
+            --accent: #C9A84C; --accent-dim: rgba(201,168,76,0.18); --accent-line: rgba(201,168,76,0.35); --accent-glow: rgba(201,168,76,0.12);
+            --text: #F0EAD6; --text-mid: rgba(240,234,214,0.60); --text-dim: rgba(240,234,214,0.28); --text-ghost: rgba(240,234,214,0.10);
+            --border: rgba(201,168,76,0.10); --border-hard: rgba(201,168,76,0.22); --ok: #4a9e6a; --err: #9e4a4a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:'Georgia',serif; font-size:1.05rem; line-height:1.7; min-height:100vh; padding:28px 18px 120px; max-width:720px; margin:0 auto; }
+        .off { display:none!important; }
+        h1 { font-family:'Georgia',serif; font-size:clamp(2.4rem,8vw,3.2rem); font-weight:700; line-height:0.95; text-transform:uppercase; color:var(--text); }
+        h1 i { font-style:italic; font-weight:700; color:var(--accent); text-transform:none; font-size:0.85em; display:block; }
+        .eyebrow { font-family:'Courier New',monospace; font-size:0.65rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+        .sub { color:var(--text-mid); font-size:1rem; margin:14px 0 24px; font-style:italic; }
+        textarea, input[type="text"], input[type="password"] { width:100%; background:var(--surface2); border:1px solid var(--border); border-left:2px solid var(--accent-line); color:var(--text); padding:16px 18px; font-family:'Georgia',serif; font-size:1rem; line-height:1.7; resize:vertical; outline:none; border-radius:2px; }
+        textarea:focus, input:focus { border-left-color:var(--accent); }
+        .btn { display:block; width:100%; padding:16px 20px; border:none; font-family:'Courier New',monospace; font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; cursor:pointer; margin-top:12px; border-radius:2px; transition:all 0.2s ease; }
+        .btn-primary { background:transparent; color:var(--accent); border:1px solid var(--accent-line); border-left:3px solid var(--accent); }
+        .btn-primary:hover { background:var(--accent-dim); border-color:var(--accent); }
+        .btn-ghost { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
+        .btn-ghost:hover { border-color:var(--accent-line); color:var(--text); }
+        .btn:disabled { opacity:0.25; cursor:not-allowed; }
+        .card { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--accent-line); padding:22px 20px; margin-bottom:18px; border-radius:2px; position:relative; overflow:hidden; }
+        .card::before { content:''; position:absolute; top:0; left:0; width:40px; height:2px; background:var(--accent); }
+        .card.gold { border-top-color:var(--accent); }
+        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+        .tag { display:inline-block; font-family:'Courier New',monospace; font-size:0.62rem; letter-spacing:2px; padding:4px 10px; text-transform:uppercase; border-radius:2px; margin-right:6px; }
+        .tag.gold { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-line); }
+        .tag.line { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+        .master-card { background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--text-ghost); padding:16px; cursor:pointer; text-align:center; border-radius:2px; transition:all 0.2s ease; }
+        .master-card:hover { border-top-color:var(--accent-line); }
+        .master-card.selected { background:var(--accent-dim); border-color:var(--accent-line); border-top-color:var(--accent); }
+        .master-name { font-family:'Georgia',serif; font-size:0.9rem; font-weight:600; margin-bottom:4px; color:var(--text); }
+        .master-type { font-family:'Courier New',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:2px; text-transform:uppercase; }
+        .chat-bubble { background:var(--surface2); border:1px solid var(--border); border-left:2px solid var(--accent-line); padding:14px 18px; margin-bottom:10px; border-radius:2px; font-family:'Georgia',serif; font-size:0.95rem; color:var(--text-mid); }
+        .chat-bubble strong { color:var(--accent); font-family:'Courier New',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; display:block; margin-bottom:6px; }
+        .post-content { font-family:'Georgia',serif; font-size:1.15rem; line-height:2; white-space:pre-wrap; color:var(--text); padding:28px 0; }
+        .strat { background:var(--accent-glow); border-left:2px solid var(--accent); padding:14px 18px; margin-bottom:20px; font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.65; color:var(--text-mid); border-radius:0 2px 2px 0; }
+        .err-msg { background:rgba(158,74,74,0.08); border-left:2px solid var(--err); padding:12px 16px; margin:12px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--err); border-radius:0 2px 2px 0; }
+        .ok-msg { background:rgba(74,158,106,0.08); border-left:2px solid var(--ok); padding:10px 14px; margin:8px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--ok); border-radius:0 2px 2px 0; }
+        .eval { padding:10px 14px; margin-bottom:14px; font-family:'Courier New',monospace; font-size:0.75rem; border-left:2px solid var(--accent); background:var(--accent-glow); border-radius:0 2px 2px 0; }
+        .eval.green { border-left-color:var(--ok); background:rgba(74,158,106,0.06); color:var(--ok); }
+        .eval.red { border-left-color:var(--err); background:rgba(158,74,74,0.06); color:var(--err); }
+        .progress { width:100%; height:2px; background:var(--border); margin-top:16px; border-radius:2px; overflow:hidden; }
+        .progress-fill { width:0%; height:100%; background:var(--accent); border-radius:2px; animation:fill 2.2s ease infinite; }
+        @keyframes fill { 0%{width:0%;} 50%{width:80%;} 100%{width:0%;} }
+        .cal { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:16px; }
+        .cal-day { aspect-ratio:1; background:var(--surface2); border:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; position:relative; border-radius:2px; font-family:'Courier New',monospace; }
+        .cal-day.num { font-size:1rem; color:var(--text-dim); }
+        .cal-day.ep { font-size:0.55rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); margin-top:3px; }
+        .cal-day.off { opacity:0.22; cursor:default; pointer-events:none; }
+        .cal-day.set { background:var(--surface); border:1px solid var(--accent-line); border-top:2px solid var(--accent); cursor:pointer; }
+        .cal-day.set .num { color:var(--text); font-weight:500; }
+        .cal-day.set:hover { background:var(--accent-dim); border-color:var(--accent); }
+        .cal-day.set::before { content:attr(data-profil); position:absolute; top:4px; right:5px; font-family:'Courier New',monospace; font-size:0.42rem; letter-spacing:1px; text-transform:uppercase; color:var(--accent); }
+        .cal-day.placeholder { cursor:pointer; border-top:2px solid var(--text-ghost); }
+        .cal-day.placeholder:hover { border-top-color:var(--accent-line); background:var(--surface); }
+        .day-detail { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--accent); padding:22px 20px; margin-top:16px; border-radius:2px; position:relative; }
+        .day-detail::before { content:''; position:absolute; top:0; left:0; width:60px; height:2px; background:var(--accent); }
+        .preview { font-family:'Georgia',serif; font-size:1rem; line-height:1.85; color:var(--text-mid); white-space:pre-wrap; margin:14px 0; border-left:1px solid var(--accent-line); padding-left:16px; font-style:italic; }
+        .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+        .actions .btn { flex:1; min-width:120px; margin-top:0; }
+        .bottom { position:fixed; bottom:0; left:0; right:0; background:rgba(8,8,8,0.96); border-top:1px solid var(--border-hard); display:flex; justify-content:space-around; padding:6px 0 8px; z-index:1000; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+        .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:8px 14px; transition:all 0.2s ease; font-family:'Courier New',monospace; font-size:0.58rem; letter-spacing:1.5px; color:var(--text-dim); text-transform:uppercase; border:none; background:none; position:relative; }
+        .nav-item::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:1px; background:var(--accent); transition:width 0.2s ease; }
+        .nav-item.active { color:var(--accent); }
+        .nav-item.active::after { width:24px; }
+        .nav-ico { font-size:1.1rem; }
+        @media(max-width:500px){ .grid-2,.grid-4{ grid-template-columns:1fr; } h1{ font-size:2rem; } }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="bottom">
+    <button class="nav-item active" onclick="go('studio')"><span class="nav-ico">🎯</span>Studio</button>
+    <button class="nav-item" onclick="go('deconstruction')"><span class="nav-ico">🔬</span>Déconstruire</button>
+    <button class="nav-item" onclick="go('trockit')"><span class="nav-ico">💎</span>Troc Kit</button>
+    <button class="nav-item" onclick="go('arsenal')"><span class="nav-ico">📅</span>Arsenal</button>
+</nav>
+<script>
+// ═══════════════════════════════════════════
+// MOMENT TROC · STUDIO — Version Réécrite
+// ═══════════════════════════════════════════
+
+const MASTER_KEY = 'MKB2000-2022A';
+const VALID_KEYS = ['MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T'];
+
+function getMomentKey(){ return localStorage.getItem('mt_moment_key'); }
+function setMomentKey(k){ localStorage.setItem('mt_moment_key', k); }
+function getGeminiKey(){ return localStorage.getItem('mt_gemini_key'); }
+function setGeminiKey(k){ localStorage.setItem('mt_gemini_key', k); }
+
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=';
+async function callGemini(prompt, useSearch=false, maxTokens=1400, fastMode=false){
+  const key = getGeminiKey();
+  if(!key) throw new Error('Clé Gemini manquante');
+  const body = { contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.88, maxOutputTokens:fastMode?400:maxTokens} };
+  if(useSearch) body.tools = [{google_search:{}}];
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fastMode?30000:60000);
+  const res = await fetch(GEMINI_URL+key, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal: controller.signal });
+  clearTimeout(timeout);
+  if(!res.ok){ const e = await res.json().catch(()=>({})); if(res.status===429) throw new Error('Limite API atteinte.'); throw new Error(e?.error?.message||'Erreur API'); }
+  const data = await res.json(); const text = data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  return text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/#{1,6}\s/g,'').trim();
+}
+
+const app = document.getElementById('app');
+function render(html){ app.innerHTML = html; }
+function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function copyTxt(text, btn){ navigator.clipboard.writeText(text).then(()=>{ btn.textContent='✓ Copié'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='Copier'; btn.classList.remove('copied'); },2000); }); }
+
+const PROFILS = {
+  AUTOMATISEUR: { organe:'Cortex Préfrontal', desir:'Un rail clair', peur:'Le chaos' },
+  OPTIMISEUR_VALEUR: { organe:'Striatum', desir:'Le meilleur ROI', peur:'Le mauvais investissement' },
+  OPTIMISEUR_PRIX: { organe:'Insula', desir:'Le juste prix', peur:'L\'arnaque' },
+  ÉLÉVATEUR: { organe:'Noyau Accumbens', desir:'Le statut', peur:'L\'exclusion' },
+  LIBÉRATEUR: { organe:'Cortex Cingulaire', desir:'La singularité', peur:'Les cases' }
+};
+
+const MAITRES = [
+  {id:'bismarck',nom:'Otto von Bismarck',categorie:'Stratège Silencieux',ton:'La force tranquille.'},
+  {id:'will',nom:'Will Aime',categorie:'Miroir Vivant',ton:'Le court-métrage qui bascule.'},
+  {id:'itachi',nom:'Itachi Uchiha',categorie:'Briseur de Réalité',ton:'Projection noire, réveil brutal.'},
+  {id:'scofield',nom:'Michael Scofield',categorie:'Architecte de l\'Ombre',ton:'Le plan froid et imparable.'},
+  {id:'tyrion',nom:'Tyrion Lannister',categorie:'Miroir Vivant',ton:'La faiblesse retournée en pouvoir.'},
+  {id:'hannibal',nom:'Hannibal Lecter',categorie:'Miroir Vivant',ton:'La psychanalyse terrifiante.'},
+  {id:'joker',nom:'Le Joker',categorie:'Miroir Vivant',ton:'La provocation révélatrice.'},
+  {id:'moriarty',nom:'James Moriarty',categorie:'Architecte de l\'Ombre',ton:'Trois coups d\'avance.'},
+  {id:'palpatine',nom:'Empereur Palpatine',categorie:'Architecte de l\'Ombre',ton:'Le faux mentor.'},
+  {id:'iago',nom:'Iago',categorie:'Architecte de l\'Ombre',ton:'Le poison des mots.'},
+  {id:'cobb',nom:'Dominick Cobb',categorie:'Briseur de Réalité',ton:'L\'idée implantée.'},
+  {id:'mrrobot',nom:'Mr. Robot',categorie:'Briseur de Réalité',ton:'Le bug dans la matrice.'},
+  {id:'tyler',nom:'Tyler Durden',categorie:'Briseur de Réalité',ton:'Brûler le faux confort.'},
+  {id:'baelish',nom:'Petyr Baelish',categorie:'Stratège Silencieux',ton:'Tirer avantage du chaos.'},
+  {id:'frank',nom:'Frank Underwood',categorie:'Stratège Silencieux',ton:'La confidence complice.'},
+  {id:'v',nom:'V',categorie:'Stratège Silencieux',ton:'Faire exploser les croyances.'}
+];
+const CATEGORIES = ['Architecte de l\'Ombre','Briseur de Réalité','Miroir Vivant','Stratège Silencieux'];
+
+const state = {
+  step:'unlock', mode:'studio', biz:'', dialogueAnswers:[], profilData:null, profilMode:'désir',
+  atelier:null, format:null, maitre:null, currentPost:null, evalData:null, stratData:null,
+  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}')
+};
+const dcState = { step:'input', post:'', contexte:'', analyse:null, contreAngle:null };
+const tkState = { offre:'', profil:'AUTOMATISEUR', mode:'désir', scripts:null };
+
+window.go = function(m) {
+  state.mode = m;
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', ['studio','deconstruction','trockit','arsenal'][i] === m);
+  });
+  if (m === 'studio') renderStudio();
+  else if (m === 'deconstruction') renderDC();
+  else if (m === 'trockit') renderTK();
+  else if (m === 'arsenal') renderArsenal();
+};
+
+/* ═══════════════════════════════════════ STUDIO ═══════════════════════════════════════ */
+function renderStudio() {
+  if (state.step === 'unlock') renderUnlock();
+  else if (state.step === 'gemini') renderGeminiGate();
+  else if (state.step === 'brief') renderBrief();
+  else if (state.step === 'dialogue') renderDialogue();
+  else if (state.step === 'profil') renderProfil();
+  else if (state.step === 'atelier') renderAtelier();
+  else if (state.step === 'format') renderFormat();
+  else if (state.step === 'pantheon') renderPantheon();
+  else if (state.step === 'result') renderResult();
+}
+
+function renderUnlock(){
+  render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Moment Troc · Studio</div><h1>Clé d'Accès</h1><p class="sub">Entre la clé fournie.</p><input id="key-input" type="text" placeholder="MT-2024X..." autocomplete="off" style="text-transform:uppercase;" /><div id="gate-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateMoment()">Entrer →</button></div>`);
+}
+window.validateMoment = function(){
+  const k = document.getElementById('key-input').value.trim().toUpperCase();
+  const err = document.getElementById('gate-err');
+  if(k===MASTER_KEY||VALID_KEYS.includes(k)){ setMomentKey(k); state.step='gemini'; renderGeminiGate(); }
+  else { err.textContent = 'Clé invalide.'; }
+};
+
+function renderGeminiGate(){
+  render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Étape 2/2</div><h1>Clé API Gemini</h1><p class="sub">Gratuit sur <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p><input id="gemini-input" type="password" placeholder="AIza..." autocomplete="off" /><div id="gemini-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateGemini()">Activer →</button></div>`);
+}
+window.validateGemini = async function(){
+  const k = document.getElementById('gemini-input').value.trim();
+  const err = document.getElementById('gemini-err');
+  if(!k.startsWith('AIza')||k.length<30){ err.textContent='Clé invalide.'; return; }
+  try{
+    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${k}`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:'OK'}]}],generationConfig:{maxOutputTokens:3}})
+    });
+    if(!test.ok) throw new Error('Clé rejetée');
+    setGeminiKey(k); state.step='brief'; renderBrief();
+  }catch(e){ err.textContent = 'Clé rejetée.'; }
+};
+
+function renderBrief(){
+  const saved = JSON.parse(localStorage.getItem('mt_brief')||'{}');
+  if(saved.biz){ state.biz = saved.biz; }
+  render(`<div class="eyebrow">Brief</div><h1>Décharge ton idée</h1><p class="sub">Décris ton business, ta cible, le problème.</p><textarea id="brief-input" rows="6" placeholder="Ex: Je vends une formation...">${esc(state.biz)}</textarea><button class="btn btn-primary" onclick="submitBrief()">Analyser →</button>`);
+}
+window.submitBrief = async function(){
+  const raw = document.getElementById('brief-input').value.trim();
+  if(!raw||raw.length<15){ alert('Décris ton business.'); return; }
+  state.biz = raw; localStorage.setItem('mt_brief',JSON.stringify({biz:raw})); state.step='dialogue'; renderDialogue();
+  try{
+    const qPrompt = `Tu es l'agent Moment Troc. Business : "${raw}". Pose exactement 2 questions stratégiques. Choisis parmi : "Qu'est-ce que ton client se dit quand il n'arrive pas à dormir ?", "Qu'a-t-il déjà essayé ?", "Qui est son plus grand concurrent ?". Retourne chaque question sur une ligne séparée.`;
+    const qRaw = await callGemini(qPrompt, true, 400, true);
+    const questions = qRaw.split('\n').filter(l=>l.trim().length>10).slice(0,2);
+    document.getElementById('dialogue-questions').innerHTML = questions.map((q,i)=>`<div class="chat-bubble"><strong>Agent</strong> : ${esc(q)}</div><textarea id="dial-answer-${i}" rows="2" placeholder="Ta réponse..."></textarea>`).join('');
+    document.getElementById('dialogue-box').classList.remove('off');
+  }catch(e){ document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
+};
+function renderDialogue(){
+  render(`<div class="eyebrow">Dialogue</div><h1>L'agent t'écoute</h1><div id="dialogue-questions"></div><div id="dialogue-box" class="off"><button class="btn btn-primary" onclick="submitDialogue()">Continuer →</button></div><div id="dialogue-err"></div>`);
+}
+window.submitDialogue = async function(){
+  const answers = []; for(let i=0;i<2;i++){ const el=document.getElementById('dial-answer-'+i); if(el)answers.push(el.value.trim()); }
+  state.dialogueAnswers = answers;
+  try{
+    const detectPrompt = `Tu es un expert du framework Moment Troc. Business : "${state.biz}". Réponses aux questions : "${answers.join(' ')}". Retourne UNIQUEMENT ce JSON : {"profil":"AUTOMATISEUR","mode":"peur","organe":"Cortex Préfrontal","tension":"phrase intérieure","simple":"explication simple"}. Profils possibles : AUTOMATISEUR, OPTIMISEUR_VALEUR, OPTIMISEUR_PRIX, ÉLÉVATEUR, LIBÉRATEUR. Mode: désir ou peur.`;
+    const raw = await callGemini(detectPrompt, false, 500, true);
+    const match = raw.match(/\{[\s\S]*?\}/); if(!match) throw new Error('Profil non détecté');
+    state.profilData = JSON.parse(match[0]); state.step='profil'; renderProfil();
+  }catch(e){ document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
+};
+
+function renderProfil(){
+  const p = state.profilData; const info = PROFILS[p.profil]||PROFILS.AUTOMATISEUR;
+  render(`<div class="eyebrow">Profil détecté</div><h1>${esc(p.profil)} <i>mode ${esc(p.mode)}</i></h1>
+    <div class="card"><div class="tag gold">${esc(p.organe)}</div><p style="margin-top:12px;font-style:italic;color:var(--text-mid);">"${esc(p.tension)}"</p><p style="color:var(--text-dim);margin-top:8px;">${esc(p.simple)}</p></div>
+    <div class="grid-2">
+      <div class="card ${state.profilMode==='désir'?'':'gold'}" style="cursor:pointer;" onclick="state.profilMode='désir';renderProfil();"><div class="tag gold">🟢 Désir</div><p style="margin-top:8px;color:var(--text-mid);">Attiré par : ${esc(info.desir)}</p></div>
+      <div class="card ${state.profilMode==='peur'?'':'gold'}" style="cursor:pointer;" onclick="state.profilMode='peur';renderProfil();"><div class="tag gold">🔴 Peur</div><p style="margin-top:8px;color:var(--text-mid);">Fuit : ${esc(info.peur)}</p></div>
+    </div>
+    <button class="btn btn-primary" onclick="state.step='atelier';renderAtelier();">Choisir l'Atelier →</button>`);
+}
+
+function renderAtelier(){
+  render(`<div class="eyebrow">Atelier</div><h1>Choisis ta phase</h1>
+    <div class="grid-2">
+      <div class="card" onclick="selectAtelier(1)"><div class="tag gold">1</div><h3>Le Miroir</h3><p style="color:var(--text-dim);">Implanter l'expertise.</p></div>
+      <div class="card" onclick="selectAtelier(2)"><div class="tag gold">2</div><h3>La Forge</h3><p style="color:var(--text-dim);">Intensifier la douleur.</p></div>
+      <div class="card" onclick="selectAtelier(3)"><div class="tag gold">3</div><h3>Le Closing</h3><p style="color:var(--text-dim);">Vendre.</p></div>
+    </div>
+    <button class="btn btn-primary" id="btn-atelier-next" onclick="state.step='format';renderFormat();" disabled>Continuer →</button>`);
+}
+window.selectAtelier = function(id){ state.atelier=id; document.getElementById('btn-atelier-next').disabled=false; };
+
+function renderFormat(){
+  render(`<div class="eyebrow">Format</div><h1>Choisis ta forme</h1>
+    <div class="grid-2">
+      <div class="card" onclick="selectFormat('tweet')"><div class="tag gold">Tweet</div><p style="color:var(--text-dim);">60-90 mots.</p></div>
+      <div class="card" onclick="selectFormat('thread')"><div class="tag gold">Thread</div><p style="color:var(--text-dim);">Post + coms.</p></div>
+      <div class="card" onclick="selectFormat('court')"><div class="tag gold">Court Métrage</div><p style="color:var(--text-dim);">150-200 mots.</p></div>
+      <div class="card" onclick="selectFormat('plan')"><div class="tag gold">Plan</div><p style="color:var(--text-dim);">100-130 mots.</p></div>
+    </div>
+    <button class="btn btn-primary" id="btn-format-next" onclick="state.step='pantheon';renderPantheon();" disabled>Continuer →</button>`);
+}
+window.selectFormat = function(id){ state.format=id; document.getElementById('btn-format-next').disabled=false; };
+
+function renderPantheon(){
+  render(`<div class="eyebrow">Arsenal des Maîtres</div><h1>Choisis ton illusion</h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="btn btn-ghost" onclick="filterMasters('Tous')" style="width:auto;padding:8px 14px;font-size:0.7rem;">Tous</button>
+      ${CATEGORIES.map(c=>`<button class="btn btn-ghost" onclick="filterMasters('${c}')" style="width:auto;padding:8px 14px;font-size:0.7rem;">${c}</button>`).join('')}
+    </div>
+    <div class="grid-2" id="masters-grid">
+      ${MAITRES.map(m=>`<div class="master-card" id="master-${m.id}" data-cat="${m.categorie}" onclick="selectMaster('${m.id}')"><div class="master-name">${m.nom}</div><div class="master-type">${m.categorie}</div></div>`).join('')}
+    </div>
+    <button class="btn btn-primary" id="btn-generate" onclick="generate()" disabled>Générer →</button>`);
+}
+window.filterMasters = function(cat){ document.querySelectorAll('.master-card').forEach(c=>{ c.classList.toggle('off', cat!=='Tous' && c.getAttribute('data-cat')!==cat); }); };
+window.selectMaster = function(id){ state.maitre = MAITRES.find(m=>m.id===id); document.querySelectorAll('.master-card').forEach(c=>c.classList.remove('selected')); document.getElementById('master-'+id).classList.add('selected'); document.getElementById('btn-generate').disabled=false; };
+
+window.generate = async function(){
+  const p = state.profilData; const info = PROFILS[p.profil]; const m = state.maitre;
+  const modeDesc = state.profilMode==='peur'?info.peur:info.desir;
+  const atelierDesc = state.atelier===1?'Implanter.':state.atelier===2?'Intensifier.':'Vendre.';
+  const expertise = document.getElementById('expertise-input')?.value.trim() || '';
+  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille…</h1><div class="card"><p style="color:var(--text-dim);">${esc(m.nom)} × ${esc(p.profil)}</p><div class="progress"><div class="progress-fill"></div></div></div>`);
+  try{
+    const prompt = `Tu es un ghostwriter Moment Troc. Maître : ${m.nom}. Profil : ${p.profil} (${info.organe}). Mode : ${state.profilMode} (${modeDesc}). Tension : "${p.tension}". Business : ${state.biz}. Atelier : ${atelierDesc}. Format : ${state.format}. ${expertise ? `\nVÉCU UTILISATEUR : "${expertise}"` : ''} Structure : Hook → T1 (Expérience) → T2 (Rupture) → Suture (1 phrase) → T3 (Mise en lumière) → T4 (Permission). JAMAIS signature. JAMAIS "peace".`;
+    const text = await callGemini(prompt, false, 1400);
+    state.currentPost = text; state.step='result'; renderResult();
+  }catch(e){ app.innerHTML+=`<div class="err-msg">${esc(e.message)}</div>`; }
+};
+
+function renderResult(){
+  render(`<div class="eyebrow">Post généré</div><h1>Ton missile</h1>
+    <div class="card" style="border-top-color:var(--accent);">
+      <div class="card-header"><div><span class="tag gold">${esc(state.profilData.profil)}</span><span class="tag gold">Atelier ${state.atelier}</span></div></div>
+      <div class="post-content">${esc(state.currentPost)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(state.currentPost)},this)">Copier</button>
+        <button class="btn btn-ghost" onclick="state.step='pantheon';renderPantheon();">Nouveau Maître</button>
+        <button class="btn btn-primary" onclick="saveToArsenal()">Sauvegarder</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost" onclick="state.step='brief';renderBrief();">← Nouveau brief</button>`);
+}
+
+/* ═══════════════════════════════════════ DÉCONSTRUCTION ═══════════════════════════ */
+function renderDC() {
+  render(`<div class="eyebrow">Déconstruction</div><h1>L'agent dissèque</h1><p class="sub">Colle un post.</p>
+    <div class="field"><textarea id="dc-post" rows="8" placeholder="Colle ici..."></textarea></div>
+    <div class="field"><textarea id="dc-contexte" rows="2" placeholder="Contexte..."></textarea></div>
+    <div class="field"><div class="flabel">Angle</div>
+      <div class="sgrid">
+        <div class="sitem on" data-dcmode="profil" onclick="selDc(this,'profil')"><div class="sname">Profil</div></div>
+        <div class="sitem" data-dcmode="marche" onclick="selDc(this,'marche')"><div class="sname">Marché</div></div>
+        <div class="sitem" data-dcmode="atelier" onclick="selDc(this,'atelier')"><div class="sname">Atelier</div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="runDC()">Autopsie →</button>
+    <div id="dc-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
+    <div id="dc-error" class="off"></div><div id="dc-result" class="off"></div>`);
+}
+window.selDc = function(el){ document.querySelectorAll('[data-dcmode]').forEach(e=>e.classList.remove('on')); el.classList.add('on'); };
+window.runDC = async function() {
+  const post = document.getElementById('dc-post').value.trim();
+  if (!post || post.length < 30) { document.getElementById('dc-error').innerHTML='<div class="err-msg">⚠ Post trop court.</div>'; document.getElementById('dc-error').classList.remove('off'); return; }
+  document.getElementById('dc-prog').classList.remove('off'); document.getElementById('dc-error').classList.add('off'); document.getElementById('dc-result').classList.add('off');
+  try {
+    const raw = await callGemini(post.slice(0,1500), false, 900);
+    const contre = await callGemini(`Contre-angle pour : "${post.slice(0,800)}". T1-T2-Suture-T3-T4.`, false, 800);
+    document.getElementById('dc-prog').classList.add('off'); document.getElementById('dc-result').classList.remove('off');
+    document.getElementById('dc-result').innerHTML = `<div class="card"><div class="eyebrow">Rapport</div><p style="color:var(--text-mid);">${esc(raw)}</p></div><div class="card gold"><div class="eyebrow">Contre-Angle</div><div class="post-content">${esc(contre)}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(contre)},this)">Copier</button></div>`;
+  } catch(e) { document.getElementById('dc-prog').classList.add('off'); document.getElementById('dc-error').innerHTML=`<div class="err-msg">⚠ ${esc(e.message)}</div>`; document.getElementById('dc-error').classList.remove('off'); }
+};
+
+/* ═══════════════════════════════════════ TROC KIT ═══════════════════════════ */
+function renderTK() {
+  const profils = ['AUTOMATISEUR','OPTIMISEUR_VALEUR','OPTIMISEUR_PRIX','ÉLÉVATEUR','LIBÉRATEUR'];
+  render(`<div class="eyebrow">Troc Kit</div><h1>Le script</h1>
+    <div class="field"><textarea id="tk-offre" rows="3" placeholder="Ton offre...">${esc(tkState.offre)}</textarea></div>
+    <div class="field"><div class="flabel">Profil</div><div class="sgrid">${profils.map(p => `<div class="sitem ${tkState.profil===p?'on':''}" onclick="tkState.profil='${p}';renderTK();"><div class="sname">${p.replace('_',' ')}</div></div>`).join('')}</div></div>
+    <div class="field"><div class="flabel">Mode</div><div class="sgrid c3"><div class="sitem ${tkState.mode==='désir'?'on':''}" onclick="tkState.mode='désir';renderTK();"><div class="sname">🟢 Désir</div></div><div class="sitem ${tkState.mode==='peur'?'on':''}" onclick="tkState.mode='peur';renderTK();"><div class="sname">🔴 Peur</div></div></div></div>
+    <button class="btn btn-primary" onclick="runTK()">Générer →</button>
+    <div id="tk-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
+    <div id="tk-error" class="off"></div><div id="tk-result" class="off"></div>`);
+}
+window.runTK = async function() {
+  const offre = document.getElementById('tk-offre').value.trim();
+  if (!offre) { document.getElementById('tk-error').innerHTML='<div class="err-msg">⚠ Offre requise.</div>'; document.getElementById('tk-error').classList.remove('off'); return; }
+  tkState.offre = offre; document.getElementById('tk-prog').classList.remove('off'); document.getElementById('tk-error').classList.add('off'); document.getElementById('tk-result').classList.add('off');
+  const urg = { AUTOMATISEUR:{style:'Planning'}, OPTIMISEUR_VALEUR:{style:'Rentabilité'}, OPTIMISEUR_PRIX:{style:'Juste prix'}, ÉLÉVATEUR:{style:'Sociale'}, LIBÉRATEUR:{style:'Aucune'} };
+  const dosage = urg[tkState.mode==='peur'?'LIBÉRATEUR':tkState.profil] || urg.AUTOMATISEUR;
+  try {
+    const raw = await callGemini(`Offre : "${offre}". Profil : ${tkState.profil}. Urgence : ${dosage.style}. Génère 4 scripts (---SEP---) : Approche, Valeur, Relance, Objection. Permission + CTA doux.`, false, 1200);
+    document.getElementById('tk-prog').classList.add('off'); document.getElementById('tk-result').classList.remove('off');
+    document.getElementById('tk-result').innerHTML = `<div class="ok-msg">⚡ ${dosage.style}</div>${raw.split('---SEP---').map(s => `<div class="card"><div class="post-content">${esc(s.trim())}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(s.trim())},this)">Copier</button></div>`).join('')}`;
+  } catch(e) { document.getElementById('tk-prog').classList.add('off'); document.getElementById('tk-error').innerHTML=`<div class="err-msg">⚠ ${esc(e.message)}</div>`; document.getElementById('tk-error').classList.remove('off'); }
+};
+
+/* ═══════════════════════════════════════ ARSENAL ═══════════════════════════ */
+window.saveToArsenal = function() {
+  if (!state.currentPost) return;
+  let day = null; for (let d=2; d<=30; d+=2) { if(!state.arsenalPosts[d]){ day=d; break; } }
+  if(!day){ alert('Mois plein.'); return; }
+  state.arsenalPosts[day] = { text:state.currentPost, profil:state.profilData?.profil||'?', savedAt:Date.now() };
+  localStorage.setItem('mt_arsenal_posts', JSON.stringify(state.arsenalPosts));
+  const btn = document.getElementById('btn-save-arsenal'); if(btn){ btn.textContent='✓ Jour '+day; }
+};
+function renderArsenal(){
+  let h = '<div class="eyebrow">Arsenal</div><h1>Calendrier</h1><div class="cal">';
+  for (let d=1; d<=30; d++) {
+    const p = state.arsenalPosts[d]; const profil = p ? p.profil?.substring(0,3).toUpperCase() : '';
+    if (d%2===0) {
+      if(p) h += `<div class="cal-day set" data-profil="${profil}" onclick="viewPost(${d})"><span class="num">J${d}</span></div>`;
+      else h += `<div class="cal-day placeholder" onclick="viewPost(${d})"><span class="num">+</span></div>`;
+    } else h += `<div class="cal-day off"><span class="num">J${d}</span></div>`;
+  }
+  h += '</div><div id="arsenal-detail" class="day-detail off"></div>';
+  render(h);
+}
+window.viewPost = function(day){
+  const p = state.arsenalPosts[day]; const el = document.getElementById('arsenal-detail');
+  if(!p){ el.innerHTML = `<div class="eyebrow">Jour ${day}</div><p>Vide.</p>`; el.classList.remove('off'); return; }
+  el.innerHTML = `<div class="eyebrow">Jour ${day}</div><div class="preview">${esc(p.text)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(p.text)},this)">Copier</button></div>`; el.classList.remove('off');
+};
+
+// ─── INIT ───
+window.onload = function(){
+  const app = document.getElementById('app');
+  if (!app) { const newApp = document.createElement('div'); newApp.id = 'app'; document.body.prepend(newApp); }
+  try {
+    const mk = localStorage.getItem('mt_moment_key');
+    const gk = localStorage.getItem('mt_gemini_key');
+    const vk = ['MKB2000-2022A','MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T'];
+    if (!mk || !vk.includes(mk)) { state.step = 'unlock'; }
+    else if (!gk || gk.length < 30) { state.step = 'gemini'; }
+    else { state.step = 'brief'; }
+  } catch (e) { state.step = 'unlock'; }
+  renderStudio();
+  setTimeout(() => { if (!document.getElementById('app')?.innerHTML) renderStudio(); }, 600);
+};
+</script>
+</body>
+</html>
