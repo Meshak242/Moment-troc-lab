@@ -33,6 +33,7 @@
         .tag { display:inline-block; font-family:'Courier New',monospace; font-size:0.62rem; letter-spacing:2px; padding:4px 10px; text-transform:uppercase; border-radius:2px; margin-right:6px; }
         .tag.gold { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-line); }
         .tag.line { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
+        .tag.illusion { background:rgba(180,130,255,0.12); color:#b482ff; border:1px solid rgba(180,130,255,0.25); }
         .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
         .master-card { background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--text-ghost); padding:16px; cursor:pointer; text-align:center; border-radius:2px; transition:all 0.2s ease; }
@@ -40,6 +41,7 @@
         .master-card.selected { background:var(--accent-dim); border-color:var(--accent-line); border-top-color:var(--accent); }
         .master-name { font-family:'Georgia',serif; font-size:0.9rem; font-weight:600; margin-bottom:4px; color:var(--text); }
         .master-type { font-family:'Courier New',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:2px; text-transform:uppercase; }
+        .master-illusion { font-family:'Courier New',monospace; font-size:0.55rem; color:#b482ff; letter-spacing:1px; margin-top:3px; }
         .chat-bubble { background:var(--surface2); border:1px solid var(--border); border-left:2px solid var(--accent-line); padding:14px 18px; margin-bottom:10px; border-radius:2px; font-family:'Georgia',serif; font-size:0.95rem; color:var(--text-mid); }
         .chat-bubble strong { color:var(--accent); font-family:'Courier New',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; display:block; margin-bottom:6px; }
         .post-content { font-family:'Georgia',serif; font-size:1.15rem; line-height:2; white-space:pre-wrap; color:var(--text); padding:28px 0; }
@@ -74,7 +76,19 @@
         .nav-item.active { color:var(--accent); }
         .nav-item.active::after { width:24px; }
         .nav-ico { font-size:1.1rem; }
+        .field { margin-bottom:24px; }
+        .flabel { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+        .sgrid { display:flex; gap:8px; flex-wrap:wrap; }
+        .sgrid.c3 .sitem { flex:1; min-width:90px; }
+        .sitem { background:var(--surface2); border:1px solid var(--border); padding:12px 10px; text-align:center; cursor:pointer; border-radius:2px; transition:all 0.2s ease; }
+        .sitem.on { background:var(--accent-dim); border-color:var(--accent-line); border-top:2px solid var(--accent); }
+        .sitem .sname { font-family:'Courier New',monospace; font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; color:var(--text); }
+        .sitem.on .sname { color:var(--accent); }
+        .illusion-detail { background:rgba(180,130,255,0.06); border:1px solid rgba(180,130,255,0.18); padding:16px 18px; margin-top:10px; border-radius:2px; }
+        .illusion-detail .ill-name { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:#b482ff; margin-bottom:6px; }
+        .illusion-detail .ill-desc { font-size:0.85rem; color:var(--text-mid); font-style:italic; line-height:1.6; }
         @media(max-width:500px){ .grid-2,.grid-4{ grid-template-columns:1fr; } h1{ font-size:2rem; } }
+        a { color:var(--accent); }
     </style>
 </head>
 <body>
@@ -87,7 +101,7 @@
 </nav>
 <script>
 // ═══════════════════════════════════════════
-// MOMENT TROC · STUDIO — Version Réécrite
+// MOMENT TROC · STUDIO — Module Illusions
 // ═══════════════════════════════════════════
 
 const MASTER_KEY = 'MKB2000-2022A';
@@ -99,24 +113,24 @@ function getGeminiKey(){ return localStorage.getItem('mt_gemini_key'); }
 function setGeminiKey(k){ localStorage.setItem('mt_gemini_key', k); }
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=';
-async function callGemini(prompt, useSearch=false, maxTokens=1400, fastMode=false){
+async function callGemini(prompt, useSearch=false, maxTokens=1400, fastMode=false) {
   const key = getGeminiKey();
   if(!key) throw new Error('Clé Gemini manquante');
-  const body = { contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.88, maxOutputTokens:fastMode?400:maxTokens} };
+  const body = { contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.7, maxOutputTokens:fastMode?400:maxTokens} };
   if(useSearch) body.tools = [{google_search:{}}];
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), fastMode?30000:60000);
   const res = await fetch(GEMINI_URL+key, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal: controller.signal });
   clearTimeout(timeout);
-  if(!res.ok){ const e = await res.json().catch(()=>({})); if(res.status===429) throw new Error('Limite API atteinte.'); throw new Error(e?.error?.message||'Erreur API'); }
+  if(!res.ok) { const e = await res.json().catch(()=>({})); if(res.status===429) throw new Error('Limite API atteinte.'); throw new Error(e?.error?.message||'Erreur API'); }
   const data = await res.json(); const text = data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
   return text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/#{1,6}\s/g,'').trim();
 }
 
 const app = document.getElementById('app');
-function render(html){ app.innerHTML = html; }
-function esc(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function copyTxt(text, btn){ navigator.clipboard.writeText(text).then(()=>{ btn.textContent='✓ Copié'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='Copier'; btn.classList.remove('copied'); },2000); }); }
+function render(html) { app.innerHTML = html; }
+function esc(s) { return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function copyTxt(text, btn) { navigator.clipboard.writeText(text).then(()=>{ btn.textContent='✓ Copié'; setTimeout(()=>{ btn.textContent='Copier'; },2000); }); }
 
 const PROFILS = {
   AUTOMATISEUR: { organe:'Cortex Préfrontal', desir:'Un rail clair', peur:'Le chaos' },
@@ -126,9 +140,45 @@ const PROFILS = {
   LIBÉRATEUR: { organe:'Cortex Cingulaire', desir:'La singularité', peur:'Les cases' }
 };
 
+// ═══════════════════════════════════════════
+// MODULE ILLUSIONS — Patterns de Maîtres
+// ═══════════════════════════════════════════
+const ILLUSIONS = {
+  itachi: { nom:'Genjutsu', mecanique:'Post = démonstration. Le lecteur est sous illusion, le post la brise. Il découvre que ce quil prenait pour vrai est faux. La révélation arrive à la fin, le laissant sans certitude.',
+    instruction:'Fais croire au lecteur quil lit un post normal. Puis brise cette croyance. Montre-lui que ce quil pensait savoir est faux. La dernière phrase doit le laisser sans repère.' },
+  joker: { nom:'Chaos Calculé', mecanique:'Pas de hook visible, pas de promesse, une rupture immédiate. Le lecteur reste parce que le chaos est plus rare que la structure. Chaque phrase est imprévisible.',
+    instruction:'Ne suis AUCUNE structure visible. Ouvre par une provocation ou une absurdité. Garde le lecteur en haleine par limprévisible. Le chaos est ta seule règle.' },
+  tyler: { nom:'Destruction du Confort', mecanique:'Le post attaque frontalement les croyances du lecteur. Il insulte son confort, sa propreté, sa politesse. La vérité fait mal.',
+    instruction:'Sois violent. Attaque ce que le lecteur croit être une qualité. Montre-lui que sa "propreté" le tue. Termine par une provocation. Aucune caresse.' },
+  cobb: { nom:'Inception', mecanique:'Le post ne vend pas, il implante. Lidée est déposée sans argumentation. Le lecteur ne la voit pas venir, mais elle grandira après lecture.',
+    instruction:'Nargumente jamais. Dépose une idée simple. Utilise une métaphore filée qui sinstalle sans bruit. La dernière phrase est une graine, pas une conclusion.' },
+  mrrobot: { nom:'Bug dans la Matrice', mecanique:'Le post dénonce le système. Il parle directement au lecteur, brise le quatrième mur, et lui révèle que les règles quil suit sont un piège.',
+    instruction:'Parle directement au lecteur. Dis "tu". Montre-lui que le jeu est truqué. Révèle une vérité que personne ne dit. La fin est un appel à se réveiller.' },
+  youssoupha: { nom:'Uppercut Philosophique', mecanique:'Vérité brutale, mot chirurgical, lucidité froide. Le post ne hurle pas, il assène. Chaque mot est pesé. La chute élève après avoir détruit.',
+    instruction:'Utilise un vocabulaire simple et chirurgical. Ouvre par une vérité brutale. Ne hurle jamais. La fin doit montrer une issue après avoir tout détruit.' },
+  scofield: { nom:'Blueprint', mecanique:'Le post est un plan dévasion que le lecteur suit sans le voir. Chaque ligne est un couloir. La structure est invisible mais le lecteur arrive exactement là où il faut.',
+    instruction:'Construis un plan invisible. Utilise "Lundi, Mardi, Mercredi..." pour créer une séquence. Le lecteur doit suivre sans sen rendre compte. La fin est la sortie du tunnel.' },
+  moriarty: { nom:'Trois Coups dAvance', mecanique:'Le post révèle que tout était prévu. Le lecteur se rend compte quil a été mené. Chaque paragraphe est un piège qui se referme à la fin.',
+    instruction:'Montre que tu as toujours un coup davance. Révèle à la fin que le lecteur a suivi un chemin tracé. Le ton est supérieur, froid, calculateur.' },
+  palpatine: { nom:'Faux Mentor', mecanique:'Le post ne donne pas la solution, il pose la question qui déstabilise. Le lecteur doit trouver lui-même la réponse.',
+    instruction:'Ne donne jamais la réponse. Pose une question qui force le lecteur à se confronter. Utilise le conditionnel. "Et si...?" Le malaise est ton outil.' },
+  iago: { nom:'Poison Verbal', mecanique:'Le post chuchote une vérité que le lecteur savait déjà mais refusait dentendre. Pas de mensonge, juste une révélation qui sinfiltre.',
+    instruction:'Chuchote, ne crie pas. Révèle une vérité que le lecteur cache. Utilise des mots simples. Montre-lui sa propre cicatrice. Pas de jugement, juste un constat.' },
+  baelish: { nom:'Chaos comme Échelle', mecanique:'Le post est cynique et lucide. Il montre que le désordre nest pas un problème, mais un outil. Le lecteur est complice du cynisme.',
+    instruction:'Sois cynique mais vrai. Montre que le chaos est une opportunité. Le lecteur doit se sentir complice. Utilise des métaphores de pouvoir et de jeu.' },
+  frank: { nom:'Quatrième Mur', mecanique:'Le post brise le quatrième mur. Il parle au lecteur en aparté, comme un secret. Le lecteur devient complice.',
+    instruction:'Brise le quatrième mur. "Juste toi et moi." Parle au lecteur en confidence. Utilise des apartés. La fin est un secret partagé.' },
+  tyrion: { nom:'Le Nain Contre le Géant', mecanique:'Le post montre que la faiblesse apparente est une force. La phrase courte bat la phrase longue. Le petit bat le grand.',
+    instruction:'Utilise des phrases très courtes. Montre que la brièveté gagne. Chaque phrase est un tendon coupé. Le silence entre les lignes est ton arme.' },
+  will_aime: { nom:'Vertige Contrôlé', mecanique:'Le post guide doucement le lecteur dans une pièce familière. À la fin, il réalise que les murs ont bougé. Il relit. Il cherche ce qui lui a échappé.',
+    instruction:'Guide le lecteur avec douceur. Crée un vertige subtil. La Suture doit être une phrase courte et énigmatique. Le lecteur doit relire pour comprendre.' },
+  hannibal: { nom:'Scalpel', mecanique:'Le post dissèque le lecteur sans douleur. Il nomme ce quil cache. Pas de jugement, juste une précision chirurgicale qui force à voir.',
+    instruction:'Dissèque sans faire mal. Nomme ce que le lecteur cache. Utilise un ton calme et précis. La fin est un miroir tendu, pas un jugement.' }
+};
+
 const MAITRES = [
   {id:'bismarck',nom:'Otto von Bismarck',categorie:'Stratège Silencieux',ton:'La force tranquille.'},
-  {id:'will',nom:'Will Aime',categorie:'Miroir Vivant',ton:'Le court-métrage qui bascule.'},
+  {id:'will_aime',nom:'Will Aime',categorie:'Miroir Vivant',ton:'Le court-métrage qui bascule.'},
   {id:'itachi',nom:'Itachi Uchiha',categorie:'Briseur de Réalité',ton:'Projection noire, réveil brutal.'},
   {id:'scofield',nom:'Michael Scofield',categorie:'Architecte de l\'Ombre',ton:'Le plan froid et imparable.'},
   {id:'tyrion',nom:'Tyrion Lannister',categorie:'Miroir Vivant',ton:'La faiblesse retournée en pouvoir.'},
@@ -142,14 +192,16 @@ const MAITRES = [
   {id:'tyler',nom:'Tyler Durden',categorie:'Briseur de Réalité',ton:'Brûler le faux confort.'},
   {id:'baelish',nom:'Petyr Baelish',categorie:'Stratège Silencieux',ton:'Tirer avantage du chaos.'},
   {id:'frank',nom:'Frank Underwood',categorie:'Stratège Silencieux',ton:'La confidence complice.'},
-  {id:'v',nom:'V',categorie:'Stratège Silencieux',ton:'Faire exploser les croyances.'}
+  {id:'v',nom:'V',categorie:'Stratège Silencieux',ton:'Faire exploser les croyances.'},
+  {id:'youssoupha',nom:'Youssoupha',categorie:'Briseur de Réalité',ton:'L\'uppercut qui t\'explique pourquoi tu saignes.'}
 ];
 const CATEGORIES = ['Architecte de l\'Ombre','Briseur de Réalité','Miroir Vivant','Stratège Silencieux'];
 
 const state = {
   step:'unlock', mode:'studio', biz:'', dialogueAnswers:[], profilData:null, profilMode:'désir',
   atelier:null, format:null, maitre:null, currentPost:null, evalData:null, stratData:null,
-  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}')
+  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}'),
+  expertise:''
 };
 const dcState = { step:'input', post:'', contexte:'', analyse:null, contreAngle:null };
 const tkState = { offre:'', profil:'AUTOMATISEUR', mode:'désir', scripts:null };
@@ -178,65 +230,94 @@ function renderStudio() {
   else if (state.step === 'result') renderResult();
 }
 
-function renderUnlock(){
+function renderUnlock() {
   render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Moment Troc · Studio</div><h1>Clé d'Accès</h1><p class="sub">Entre la clé fournie.</p><input id="key-input" type="text" placeholder="MT-2024X..." autocomplete="off" style="text-transform:uppercase;" /><div id="gate-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateMoment()">Entrer →</button></div>`);
 }
-window.validateMoment = function(){
+window.validateMoment = function() {
   const k = document.getElementById('key-input').value.trim().toUpperCase();
   const err = document.getElementById('gate-err');
-  if(k===MASTER_KEY||VALID_KEYS.includes(k)){ setMomentKey(k); state.step='gemini'; renderGeminiGate(); }
+  if(k===MASTER_KEY||VALID_KEYS.includes(k)) { setMomentKey(k); state.step='gemini'; renderGeminiGate(); }
   else { err.textContent = 'Clé invalide.'; }
 };
 
-function renderGeminiGate(){
+function renderGeminiGate() {
   render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Étape 2/2</div><h1>Clé API Gemini</h1><p class="sub">Gratuit sur <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p><input id="gemini-input" type="password" placeholder="AIza..." autocomplete="off" /><div id="gemini-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateGemini()">Activer →</button></div>`);
 }
-window.validateGemini = async function(){
+window.validateGemini = async function() {
   const k = document.getElementById('gemini-input').value.trim();
   const err = document.getElementById('gemini-err');
-  if(!k.startsWith('AIza')||k.length<30){ err.textContent='Clé invalide.'; return; }
-  try{
-    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${k}`,{
+  if(!k.startsWith('AIza')||k.length<30) { err.textContent='Clé invalide.'; return; }
+  try {
+    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${k}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:'OK'}]}],generationConfig:{maxOutputTokens:3}})
     });
     if(!test.ok) throw new Error('Clé rejetée');
     setGeminiKey(k); state.step='brief'; renderBrief();
-  }catch(e){ err.textContent = 'Clé rejetée.'; }
+  } catch(e) { err.textContent = 'Clé rejetée.'; }
 };
 
-function renderBrief(){
+// ─── BRIEF AVANCÉ (MODIFIÉ) ───
+function renderBrief() {
   const saved = JSON.parse(localStorage.getItem('mt_brief')||'{}');
-  if(saved.biz){ state.biz = saved.biz; }
-  render(`<div class="eyebrow">Brief</div><h1>Décharge ton idée</h1><p class="sub">Décris ton business, ta cible, le problème.</p><textarea id="brief-input" rows="6" placeholder="Ex: Je vends une formation...">${esc(state.biz)}</textarea><button class="btn btn-primary" onclick="submitBrief()">Analyser →</button>`);
+  if(saved.biz) { state.biz = saved.biz; }
+  if(saved.expertise) { state.expertise = saved.expertise; }
+  render(`<div class="eyebrow">Brief</div><h1>Décharge ton idée</h1>
+    <p class="sub">Plus tu es précis, plus le missile sera calibré.</p>
+
+    <div class="field">
+      <div class="flabel">Ton business en une phrase</div>
+      <textarea id="brief-input" rows="2" placeholder="Ex: Je vends une formation pour freelances qui n'arrivent pas à signer leurs premiers clients...">${esc(state.biz)}</textarea>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Qui est ton client ? Quelle est sa tension profonde ?</div>
+      <textarea id="tension-input" rows="3" placeholder="Ex: Il a déjà acheté 3 formations, rien n'a marché. Il croit que vendre est un don qu'il n'a pas. Il se sent maudit, en retard sur sa vie.">${esc(saved.tension||'')}</textarea>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Vécu utilisateur (anecdote, prénom, résultat)</div>
+      <textarea id="expertise-input" rows="3" placeholder="Ex: Karim, 34 ans, postait depuis 4 mois sans un seul client. Il a changé son premier DM et a signé 250€ en une semaine.">${esc(state.expertise)}</textarea>
+    </div>
+
+    <button class="btn btn-primary" onclick="submitBrief()">Continuer →</button>
+    <p style="color:var(--text-dim);font-size:0.8rem;margin-top:12px;">Ces informations nourrissent l'IA pour un post chirurgical, pas un post générique. Remplis tout.</p>`);
 }
-window.submitBrief = async function(){
+
+window.submitBrief = async function() {
   const raw = document.getElementById('brief-input').value.trim();
-  if(!raw||raw.length<15){ alert('Décris ton business.'); return; }
-  state.biz = raw; localStorage.setItem('mt_brief',JSON.stringify({biz:raw})); state.step='dialogue'; renderDialogue();
-  try{
-    const qPrompt = `Tu es l'agent Moment Troc. Business : "${raw}". Pose exactement 2 questions stratégiques. Choisis parmi : "Qu'est-ce que ton client se dit quand il n'arrive pas à dormir ?", "Qu'a-t-il déjà essayé ?", "Qui est son plus grand concurrent ?". Retourne chaque question sur une ligne séparée.`;
+  const tension = document.getElementById('tension-input')?.value.trim() || '';
+  const exp = document.getElementById('expertise-input')?.value.trim() || '';
+  if(!raw||raw.length<15) { alert('Décris ton business en au moins 15 caractères.'); return; }
+  state.biz = raw; state.expertise = exp;
+  localStorage.setItem('mt_brief',JSON.stringify({biz:raw,expertise:exp,tension:tension}));
+  state.tensionSupplement = tension;
+  state.step='dialogue'; renderDialogue();
+  try {
+    const qPrompt = `Tu es l'agent Moment Troc. Business : "${raw}". Tension possible du client : "${tension}". Pose exactement 2 questions stratégiques. Choisis parmi : "Qu'est-ce que ton client se dit quand il n'arrive pas à dormir ?", "Qu'a-t-il déjà essayé ?", "Qui est son plus grand concurrent ?". Retourne chaque question sur une ligne séparée.`;
     const qRaw = await callGemini(qPrompt, true, 400, true);
     const questions = qRaw.split('\n').filter(l=>l.trim().length>10).slice(0,2);
     document.getElementById('dialogue-questions').innerHTML = questions.map((q,i)=>`<div class="chat-bubble"><strong>Agent</strong> : ${esc(q)}</div><textarea id="dial-answer-${i}" rows="2" placeholder="Ta réponse..."></textarea>`).join('');
     document.getElementById('dialogue-box').classList.remove('off');
-  }catch(e){ document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
+  } catch(e) { document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
 };
-function renderDialogue(){
+
+function renderDialogue() {
   render(`<div class="eyebrow">Dialogue</div><h1>L'agent t'écoute</h1><div id="dialogue-questions"></div><div id="dialogue-box" class="off"><button class="btn btn-primary" onclick="submitDialogue()">Continuer →</button></div><div id="dialogue-err"></div>`);
 }
-window.submitDialogue = async function(){
-  const answers = []; for(let i=0;i<2;i++){ const el=document.getElementById('dial-answer-'+i); if(el)answers.push(el.value.trim()); }
+
+window.submitDialogue = async function() {
+  const answers = []; for(let i=0;i<2;i++) { const el=document.getElementById('dial-answer-'+i); if(el)answers.push(el.value.trim()); }
   state.dialogueAnswers = answers;
-  try{
-    const detectPrompt = `Tu es un expert du framework Moment Troc. Business : "${state.biz}". Réponses aux questions : "${answers.join(' ')}". Retourne UNIQUEMENT ce JSON : {"profil":"AUTOMATISEUR","mode":"peur","organe":"Cortex Préfrontal","tension":"phrase intérieure","simple":"explication simple"}. Profils possibles : AUTOMATISEUR, OPTIMISEUR_VALEUR, OPTIMISEUR_PRIX, ÉLÉVATEUR, LIBÉRATEUR. Mode: désir ou peur.`;
+  try {
+    const detectPrompt = `Tu es un expert du framework Moment Troc. Business : "${state.biz}". Tension : "${state.tensionSupplement||''}". Réponses aux questions : "${answers.join(' ')}". Retourne UNIQUEMENT ce JSON : {"profil":"AUTOMATISEUR","mode":"peur","organe":"Cortex Préfrontal","tension":"phrase intérieure","simple":"explication simple"}. Profils possibles : AUTOMATISEUR, OPTIMISEUR_VALEUR, OPTIMISEUR_PRIX, ÉLÉVATEUR, LIBÉRATEUR. Mode: désir ou peur.`;
     const raw = await callGemini(detectPrompt, false, 500, true);
     const match = raw.match(/\{[\s\S]*?\}/); if(!match) throw new Error('Profil non détecté');
     state.profilData = JSON.parse(match[0]); state.step='profil'; renderProfil();
-  }catch(e){ document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
+  } catch(e) { document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
 };
 
-function renderProfil(){
+function renderProfil() {
   const p = state.profilData; const info = PROFILS[p.profil]||PROFILS.AUTOMATISEUR;
   render(`<div class="eyebrow">Profil détecté</div><h1>${esc(p.profil)} <i>mode ${esc(p.mode)}</i></h1>
     <div class="card"><div class="tag gold">${esc(p.organe)}</div><p style="margin-top:12px;font-style:italic;color:var(--text-mid);">"${esc(p.tension)}"</p><p style="color:var(--text-dim);margin-top:8px;">${esc(p.simple)}</p></div>
@@ -247,7 +328,7 @@ function renderProfil(){
     <button class="btn btn-primary" onclick="state.step='atelier';renderAtelier();">Choisir l'Atelier →</button>`);
 }
 
-function renderAtelier(){
+function renderAtelier() {
   render(`<div class="eyebrow">Atelier</div><h1>Choisis ta phase</h1>
     <div class="grid-2">
       <div class="card" onclick="selectAtelier(1)"><div class="tag gold">1</div><h3>Le Miroir</h3><p style="color:var(--text-dim);">Implanter l'expertise.</p></div>
@@ -256,9 +337,9 @@ function renderAtelier(){
     </div>
     <button class="btn btn-primary" id="btn-atelier-next" onclick="state.step='format';renderFormat();" disabled>Continuer →</button>`);
 }
-window.selectAtelier = function(id){ state.atelier=id; document.getElementById('btn-atelier-next').disabled=false; };
+window.selectAtelier = function(id) { state.atelier=id; document.getElementById('btn-atelier-next').disabled=false; };
 
-function renderFormat(){
+function renderFormat() {
   render(`<div class="eyebrow">Format</div><h1>Choisis ta forme</h1>
     <div class="grid-2">
       <div class="card" onclick="selectFormat('tweet')"><div class="tag gold">Tweet</div><p style="color:var(--text-dim);">60-90 mots.</p></div>
@@ -268,44 +349,113 @@ function renderFormat(){
     </div>
     <button class="btn btn-primary" id="btn-format-next" onclick="state.step='pantheon';renderPantheon();" disabled>Continuer →</button>`);
 }
-window.selectFormat = function(id){ state.format=id; document.getElementById('btn-format-next').disabled=false; };
+window.selectFormat = function(id) { state.format=id; document.getElementById('btn-format-next').disabled=false; };
 
-function renderPantheon(){
+function renderPantheon() {
   render(`<div class="eyebrow">Arsenal des Maîtres</div><h1>Choisis ton illusion</h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
       <button class="btn btn-ghost" onclick="filterMasters('Tous')" style="width:auto;padding:8px 14px;font-size:0.7rem;">Tous</button>
       ${CATEGORIES.map(c=>`<button class="btn btn-ghost" onclick="filterMasters('${c}')" style="width:auto;padding:8px 14px;font-size:0.7rem;">${c}</button>`).join('')}
     </div>
     <div class="grid-2" id="masters-grid">
-      ${MAITRES.map(m=>`<div class="master-card" id="master-${m.id}" data-cat="${m.categorie}" onclick="selectMaster('${m.id}')"><div class="master-name">${m.nom}</div><div class="master-type">${m.categorie}</div></div>`).join('')}
+      ${MAITRES.map(m=>{
+        const ill = ILLUSIONS[m.id];
+        return `<div class="master-card" id="master-${m.id}" data-cat="${m.categorie}" onclick="selectMaster('${m.id}')">
+          <div class="master-name">${m.nom}</div>
+          <div class="master-type">${m.categorie}</div>
+          ${ill ? `<div class="master-illusion">⚡ ${ill.nom}</div>` : ''}
+        </div>`;
+      }).join('')}
     </div>
+    <div id="illusion-detail" class="illusion-detail off"></div>
     <button class="btn btn-primary" id="btn-generate" onclick="generate()" disabled>Générer →</button>`);
 }
-window.filterMasters = function(cat){ document.querySelectorAll('.master-card').forEach(c=>{ c.classList.toggle('off', cat!=='Tous' && c.getAttribute('data-cat')!==cat); }); };
-window.selectMaster = function(id){ state.maitre = MAITRES.find(m=>m.id===id); document.querySelectorAll('.master-card').forEach(c=>c.classList.remove('selected')); document.getElementById('master-'+id).classList.add('selected'); document.getElementById('btn-generate').disabled=false; };
+window.filterMasters = function(cat) {
+  document.querySelectorAll('.master-card').forEach(c=>{
+    c.classList.toggle('off', cat!=='Tous' && c.getAttribute('data-cat')!==cat);
+  });
+};
+window.selectMaster = function(id) {
+  state.maitre = MAITRES.find(m=>m.id===id);
+  document.querySelectorAll('.master-card').forEach(c=>c.classList.remove('selected'));
+  const card = document.getElementById('master-'+id);
+  if(card) card.classList.add('selected');
+  document.getElementById('btn-generate').disabled=false;
 
-window.generate = async function(){
-  const p = state.profilData; const info = PROFILS[p.profil]; const m = state.maitre;
-  const modeDesc = state.profilMode==='peur'?info.peur:info.desir;
-  const atelierDesc = state.atelier===1?'Implanter.':state.atelier===2?'Intensifier.':'Vendre.';
-  const expertise = document.getElementById('expertise-input')?.value.trim() || '';
-  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille…</h1><div class="card"><p style="color:var(--text-dim);">${esc(m.nom)} × ${esc(p.profil)}</p><div class="progress"><div class="progress-fill"></div></div></div>`);
-  try{
-    const prompt = `Tu es un ghostwriter Moment Troc. Maître : ${m.nom}. Profil : ${p.profil} (${info.organe}). Mode : ${state.profilMode} (${modeDesc}). Tension : "${p.tension}". Business : ${state.biz}. Atelier : ${atelierDesc}. Format : ${state.format}. ${expertise ? `\nVÉCU UTILISATEUR : "${expertise}"` : ''} Structure : Hook → T1 (Expérience) → T2 (Rupture) → Suture (1 phrase) → T3 (Mise en lumière) → T4 (Permission). JAMAIS signature. JAMAIS "peace".`;
-    const text = await callGemini(prompt, false, 1400);
-    state.currentPost = text; state.step='result'; renderResult();
-  }catch(e){ app.innerHTML+=`<div class="err-msg">${esc(e.message)}</div>`; }
+  const ill = ILLUSIONS[id];
+  const detail = document.getElementById('illusion-detail');
+  if(ill && detail) {
+    detail.innerHTML = `<div class="ill-name">⚡ ${ill.nom}</div><div class="ill-desc">${ill.mecanique}</div>`;
+    detail.classList.remove('off');
+  } else if(detail) {
+    detail.classList.add('off');
+  }
 };
 
-function renderResult(){
+// ─── GENERATE (MODIFIÉ) ───
+window.generate = async function() {
+  const p = state.profilData;
+  if(!p) { alert('Profil non détecté. Reviens en arrière.'); return; }
+  const info = PROFILS[p.profil]||PROFILS.AUTOMATISEUR;
+  const m = state.maitre;
+  if(!m) { alert('Sélectionne un Maître.'); return; }
+  const modeDesc = state.profilMode==='peur'?info.peur:info.desir;
+  const atelierDesc = state.atelier===1?'Implanter.':state.atelier===2?'Intensifier.':'Vendre.';
+  const expertise = state.expertise || '';
+  const tensionSupp = state.tensionSupplement || '';
+  const illusion = ILLUSIONS[m.id];
+
+  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille…</h1>
+    <div class="card">
+      <p style="color:var(--text-dim);">${esc(m.nom)} · ${illusion?illusion.nom:'Style classique'} × ${esc(p.profil)}</p>
+      <div class="progress"><div class="progress-fill"></div></div>
+    </div>`);
+
+  try {
+    const prompt = `Tu es un ghostwriter du laboratoire Moment Troc.
+
+TU INCARNES : ${m.nom}.
+Catégorie : ${m.categorie}.
+
+ILLUSION ACTIVE : ${illusion ? illusion.nom + ' — ' + illusion.mecanique : 'Style classique'}
+INSTRUCTION MAÎTRE : ${illusion ? illusion.instruction : 'Applique la structure standard avec le ton défini.'}
+
+PROFIL CIBLE : ${p.profil} (${info.organe}).
+MODE : ${state.profilMode} (${modeDesc}).
+TENSION DÉTECTÉE : "${p.tension}".
+TENSION SUPPLÉMENTAIRE : "${tensionSupp}".
+BUSINESS : ${state.biz}.
+ATELIER : ${atelierDesc}.
+FORMAT : ${state.format}.
+${expertise ? `VÉCU UTILISATEUR (ANECDOTE RÉELLE) : "${expertise}"` : 'Tu inventeras une anecdote crédible avec prénom et résultat.'}
+
+STRUCTURE DE BASE (à respecter ou à briser selon l'illusion du Maître) :
+Hook → T1 (Expérience concrète avec prénom) → T2 (Rupture : renverse la croyance) → Suture (1 seule phrase, énigmatique) → T3 (Mise en lumière, solution) → T4 (Permission douce, jamais de CTA agressif).
+
+RÈGLES ABSOLUES :
+- Chaque phrase doit avoir un but. Aucun remplissage.
+- Pas de métaphores vagues (soleil, montagne, chemin...).
+- Pas de citations ou proverbes.
+- Pas "Peace", pas signature.
+- Un seul exemple concret avec un prénom.
+- Le lecteur doit ressentir physiquement la tension.`;
+
+    const text = await callGemini(prompt, false, 1400);
+    state.currentPost = text; state.step='result'; renderResult();
+  } catch(e) { app.innerHTML+=`<div class="err-msg">${esc(e.message)}</div>`; }
+};
+
+function renderResult() {
+  const illusion = state.maitre ? ILLUSIONS[state.maitre.id] : null;
   render(`<div class="eyebrow">Post généré</div><h1>Ton missile</h1>
+    ${illusion ? `<div class="tag illusion" style="margin-bottom:12px;">⚡ ${illusion.nom}</div>` : ''}
     <div class="card" style="border-top-color:var(--accent);">
       <div class="card-header"><div><span class="tag gold">${esc(state.profilData.profil)}</span><span class="tag gold">Atelier ${state.atelier}</span></div></div>
       <div class="post-content">${esc(state.currentPost)}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(state.currentPost)},this)">Copier</button>
         <button class="btn btn-ghost" onclick="state.step='pantheon';renderPantheon();">Nouveau Maître</button>
-        <button class="btn btn-primary" onclick="saveToArsenal()">Sauvegarder</button>
+        <button class="btn btn-primary" id="btn-save-arsenal" onclick="saveToArsenal()">Sauvegarder</button>
       </div>
     </div>
     <button class="btn btn-ghost" onclick="state.step='brief';renderBrief();">← Nouveau brief</button>`);
@@ -327,7 +477,7 @@ function renderDC() {
     <div id="dc-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
     <div id="dc-error" class="off"></div><div id="dc-result" class="off"></div>`);
 }
-window.selDc = function(el){ document.querySelectorAll('[data-dcmode]').forEach(e=>e.classList.remove('on')); el.classList.add('on'); };
+window.selDc = function(el) { document.querySelectorAll('[data-dcmode]').forEach(e=>e.classList.remove('on')); el.classList.add('on'); };
 window.runDC = async function() {
   const post = document.getElementById('dc-post').value.trim();
   if (!post || post.length < 30) { document.getElementById('dc-error').innerHTML='<div class="err-msg">⚠ Post trop court.</div>'; document.getElementById('dc-error').classList.remove('off'); return; }
@@ -373,7 +523,7 @@ window.saveToArsenal = function() {
   localStorage.setItem('mt_arsenal_posts', JSON.stringify(state.arsenalPosts));
   const btn = document.getElementById('btn-save-arsenal'); if(btn){ btn.textContent='✓ Jour '+day; }
 };
-function renderArsenal(){
+function renderArsenal() {
   let h = '<div class="eyebrow">Arsenal</div><h1>Calendrier</h1><div class="cal">';
   for (let d=1; d<=30; d++) {
     const p = state.arsenalPosts[d]; const profil = p ? p.profil?.substring(0,3).toUpperCase() : '';
@@ -385,16 +535,15 @@ function renderArsenal(){
   h += '</div><div id="arsenal-detail" class="day-detail off"></div>';
   render(h);
 }
-window.viewPost = function(day){
+window.viewPost = function(day) {
   const p = state.arsenalPosts[day]; const el = document.getElementById('arsenal-detail');
-  if(!p){ el.innerHTML = `<div class="eyebrow">Jour ${day}</div><p>Vide.</p>`; el.classList.remove('off'); return; }
+  if(!p) { el.innerHTML = `<div class="eyebrow">Jour ${day}</div><p>Vide.</p>`; el.classList.remove('off'); return; }
   el.innerHTML = `<div class="eyebrow">Jour ${day}</div><div class="preview">${esc(p.text)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(p.text)},this)">Copier</button></div>`; el.classList.remove('off');
 };
 
-// ─── INIT ───
-window.onload = function(){
-  const app = document.getElementById('app');
-  if (!app) { const newApp = document.createElement('div'); newApp.id = 'app'; document.body.prepend(newApp); }
+window.onload = function() {
+  const appEl = document.getElementById('app');
+  if (!appEl) { const newApp = document.createElement('div'); newApp.id = 'app'; document.body.prepend(newApp); }
   try {
     const mk = localStorage.getItem('mt_moment_key');
     const gk = localStorage.getItem('mt_gemini_key');
