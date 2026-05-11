@@ -33,27 +33,25 @@
         .tag { display:inline-block; font-family:'Courier New',monospace; font-size:0.62rem; letter-spacing:2px; padding:4px 10px; text-transform:uppercase; border-radius:2px; margin-right:6px; }
         .tag.gold { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-line); }
         .tag.line { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
-        .tag.illusion { background:rgba(180,130,255,0.12); color:#b482ff; border:1px solid rgba(180,130,255,0.25); }
         .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-        .master-card { background:var(--surface2); border:1px solid var(--border); border-top:2px solid var(--text-ghost); padding:16px; cursor:pointer; text-align:center; border-radius:2px; transition:all 0.2s ease; }
-        .master-card:hover { border-top-color:var(--accent-line); }
-        .master-card.selected { background:var(--accent-dim); border-color:var(--accent-line); border-top-color:var(--accent); }
-        .master-name { font-family:'Georgia',serif; font-size:0.9rem; font-weight:600; margin-bottom:4px; color:var(--text); }
-        .master-type { font-family:'Courier New',monospace; font-size:0.6rem; color:var(--accent); letter-spacing:2px; text-transform:uppercase; }
-        .master-illusion { font-family:'Courier New',monospace; font-size:0.55rem; color:#b482ff; letter-spacing:1px; margin-top:3px; }
-        .chat-bubble { background:var(--surface2); border:1px solid var(--border); border-left:2px solid var(--accent-line); padding:14px 18px; margin-bottom:10px; border-radius:2px; font-family:'Georgia',serif; font-size:0.95rem; color:var(--text-mid); }
-        .chat-bubble strong { color:var(--accent); font-family:'Courier New',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; display:block; margin-bottom:6px; }
         .post-content { font-family:'Georgia',serif; font-size:1.15rem; line-height:2; white-space:pre-wrap; color:var(--text); padding:28px 0; }
-        .strat { background:var(--accent-glow); border-left:2px solid var(--accent); padding:14px 18px; margin-bottom:20px; font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.65; color:var(--text-mid); border-radius:0 2px 2px 0; }
         .err-msg { background:rgba(158,74,74,0.08); border-left:2px solid var(--err); padding:12px 16px; margin:12px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--err); border-radius:0 2px 2px 0; }
         .ok-msg { background:rgba(74,158,106,0.08); border-left:2px solid var(--ok); padding:10px 14px; margin:8px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--ok); border-radius:0 2px 2px 0; }
-        .eval { padding:10px 14px; margin-bottom:14px; font-family:'Courier New',monospace; font-size:0.75rem; border-left:2px solid var(--accent); background:var(--accent-glow); border-radius:0 2px 2px 0; }
-        .eval.green { border-left-color:var(--ok); background:rgba(74,158,106,0.06); color:var(--ok); }
-        .eval.red { border-left-color:var(--err); background:rgba(158,74,74,0.06); color:var(--err); }
         .progress { width:100%; height:2px; background:var(--border); margin-top:16px; border-radius:2px; overflow:hidden; }
         .progress-fill { width:0%; height:100%; background:var(--accent); border-radius:2px; animation:fill 2.2s ease infinite; }
         @keyframes fill { 0%{width:0%;} 50%{width:80%;} 100%{width:0%;} }
+        .field { margin-bottom:24px; }
+        .flabel { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+        .sgrid { display:flex; gap:8px; flex-wrap:wrap; }
+        .sgrid.c3 .sitem { flex:1; min-width:90px; }
+        .sitem { background:var(--surface2); border:1px solid var(--border); padding:12px 10px; text-align:center; cursor:pointer; border-radius:2px; transition:all 0.2s ease; }
+        .sitem.on { background:var(--accent-dim); border-color:var(--accent-line); border-top:2px solid var(--accent); }
+        .sitem .sname { font-family:'Courier New',monospace; font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; color:var(--text); }
+        .sitem.on .sname { color:var(--accent); }
+        .angle-card { background:var(--surface2); border:1px solid var(--border); padding:14px; cursor:pointer; border-radius:2px; transition:all 0.2s; }
+        .angle-card:hover { border-color:var(--accent-line); background:var(--accent-dim); }
+        .angle-card.selected { border-color:var(--accent); }
         .cal { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:16px; }
         .cal-day { aspect-ratio:1; background:var(--surface2); border:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; position:relative; border-radius:2px; font-family:'Courier New',monospace; }
         .cal-day.num { font-size:1rem; color:var(--text-dim); }
@@ -62,7 +60,6 @@
         .cal-day.set { background:var(--surface); border:1px solid var(--accent-line); border-top:2px solid var(--accent); cursor:pointer; }
         .cal-day.set .num { color:var(--text); font-weight:500; }
         .cal-day.set:hover { background:var(--accent-dim); border-color:var(--accent); }
-        .cal-day.set::before { content:attr(data-profil); position:absolute; top:4px; right:5px; font-family:'Courier New',monospace; font-size:0.42rem; letter-spacing:1px; text-transform:uppercase; color:var(--accent); }
         .cal-day.placeholder { cursor:pointer; border-top:2px solid var(--text-ghost); }
         .cal-day.placeholder:hover { border-top-color:var(--accent-line); background:var(--surface); }
         .day-detail { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--accent); padding:22px 20px; margin-top:16px; border-radius:2px; position:relative; }
@@ -76,18 +73,6 @@
         .nav-item.active { color:var(--accent); }
         .nav-item.active::after { width:24px; }
         .nav-ico { font-size:1.1rem; }
-        .field { margin-bottom:24px; }
-        .flabel { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
-        .sgrid { display:flex; gap:8px; flex-wrap:wrap; }
-        .sgrid.c3 .sitem { flex:1; min-width:90px; }
-        .sitem { background:var(--surface2); border:1px solid var(--border); padding:12px 10px; text-align:center; cursor:pointer; border-radius:2px; transition:all 0.2s ease; }
-        .sitem.on { background:var(--accent-dim); border-color:var(--accent-line); border-top:2px solid var(--accent); }
-        .sitem .sname { font-family:'Courier New',monospace; font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; color:var(--text); }
-        .sitem.on .sname { color:var(--accent); }
-        .illusion-detail { background:rgba(180,130,255,0.06); border:1px solid rgba(180,130,255,0.18); padding:16px 18px; margin-top:10px; border-radius:2px; }
-        .illusion-detail .ill-name { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:#b482ff; margin-bottom:6px; }
-        .illusion-detail .ill-desc { font-size:0.85rem; color:var(--text-mid); font-style:italic; line-height:1.6; }
-        @media(max-width:500px){ .grid-2,.grid-4{ grid-template-columns:1fr; } h1{ font-size:2rem; } }
         a { color:var(--accent); }
     </style>
 </head>
@@ -101,428 +86,312 @@
 </nav>
 <script>
 // ═══════════════════════════════════════════
-// MOMENT TROC · STUDIO — Code final corrigé
+// MOMENT TROC · STUDIO — Code complet
 // ═══════════════════════════════════════════
 
-const MASTER_KEY = 'MKB2000-2022A';
-const VALID_KEYS = ['MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T'];
-
+// --- CLÉS ET AUTHENTIFICATION ---
+const VALID_KEYS = ['MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T','MKB2000-2022A'];
 function getMomentKey(){ return localStorage.getItem('mt_moment_key'); }
 function setMomentKey(k){ localStorage.setItem('mt_moment_key', k); }
 function getGeminiKey(){ return localStorage.getItem('mt_gemini_key'); }
 function setGeminiKey(k){ localStorage.setItem('mt_gemini_key', k); }
 
-// Modèle utilisé pour les générations principales (plus puissant)
-const GENERATION_MODEL = 'gemini-2.5-flash';
-const GENERATION_TEMP = 0.3; // froid chirurgical
+const MODEL = 'gemini-2.5-flash'; // Modèle principal, plus puissant que Flash-Lite
 
-// Ancienne fonction pour les appels de base (Déconstruction, Troc Kit) — inchangée
-const GEMINI_URL_LITE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=';
-async function callGemini(prompt, useSearch=false, maxTokens=1400, fastMode=false) {
+async function callGeminiFlash(prompt, temp=0.3, maxTokens=600) {
   const key = getGeminiKey();
   if(!key) throw new Error('Clé Gemini manquante');
-  const body = { contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.7, maxOutputTokens:fastMode?400:maxTokens} };
-  if(useSearch) body.tools = [{google_search:{}}];
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), fastMode?30000:60000);
-  const res = await fetch(GEMINI_URL_LITE+key, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal: controller.signal });
-  clearTimeout(timeout);
-  if(!res.ok) { const e = await res.json().catch(()=>({})); if(res.status===429) throw new Error('Limite API atteinte.'); throw new Error(e?.error?.message||'Erreur API'); }
-  const data = await res.json(); const text = data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  return text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/#{1,6}\s/g,'').trim();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
+  const res = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:temp, maxOutputTokens:maxTokens} })
+  });
+  if(!res.ok) throw new Error('Erreur API');
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
 }
 
-// Nouvelle fonction pour le modèle Flash standard avec température réglable
-async function callGeminiFlash(prompt, maxTokens=1400, temperature=GENERATION_TEMP) {
+// Ancienne fonction pour modules secondaires (Déconstruction, Troc Kit)
+async function callGeminiLite(prompt) {
   const key = getGeminiKey();
-  if(!key) throw new Error('Clé Gemini manquante');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GENERATION_MODEL}:generateContent?key=${key}`;
-  const body = { 
-    contents:[{parts:[{text:prompt}]}], 
-    generationConfig:{temperature:temperature, maxOutputTokens:maxTokens} 
-  };
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
-  const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body), signal: controller.signal });
-  clearTimeout(timeout);
-  if(!res.ok) { const e = await res.json().catch(()=>({})); if(res.status===429) throw new Error('Limite API atteinte.'); throw new Error(e?.error?.message||'Erreur API'); }
-  const data = await res.json(); const text = data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  return text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/#{1,6}\s/g,'').trim();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${key}`;
+  const res = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.7, maxOutputTokens:800} })
+  });
+  if(!res.ok) throw new Error('Erreur API');
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
 }
 
+// --- FONCTIONS UTILITAIRES ---
 const app = document.getElementById('app');
 function render(html) { app.innerHTML = html; }
 function esc(s) { return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function copyTxt(text, btn) { navigator.clipboard.writeText(text).then(()=>{ btn.textContent='✓ Copié'; setTimeout(()=>{ btn.textContent='Copier'; },2000); }); }
 
-const PROFILS = {
-  AUTOMATISEUR: { organe:'Cortex Préfrontal', desir:'Un rail clair', peur:'Le chaos' },
-  OPTIMISEUR_VALEUR: { organe:'Striatum', desir:'Le meilleur ROI', peur:'Le mauvais investissement' },
-  OPTIMISEUR_PRIX: { organe:'Insula', desir:'Le juste prix', peur:'L\'arnaque' },
-  ÉLÉVATEUR: { organe:'Noyau Accumbens', desir:'Le statut', peur:'L\'exclusion' },
-  LIBÉRATEUR: { organe:'Cortex Cingulaire', desir:'La singularité', peur:'Les cases' }
+// --- DÉTECTION AUTOMATIQUE DU PROFIL ---
+function detectProfil(tension) {
+  const t = tension.toLowerCase();
+  if(t.includes('chaos')||t.includes('étape')||t.includes('méthode')||t.includes('surcharge')) return 'AUTOMATISEUR';
+  if(t.includes('perte')||t.includes('argent')||t.includes('calcul')||t.includes('roi')) return 'OPTIMISEUR_VALEUR';
+  if(t.includes('image')||t.includes('statut')||t.includes('respect')) return 'ÉLÉVATEUR';
+  if(t.includes('différent')||t.includes('atypique')||t.includes('case')) return 'LIBÉRATEUR';
+  return 'AUTOMATISEUR';
+}
+
+// --- ÉTAT GLOBAL ---
+let state = {
+  mode:'studio',
+  step:'unlock', // 'unlock' | 'gemini' | 'brief' | 'grille' | 'result'
+  biz:'', tension:'', anecdotes:[], offre:'',
+  profil:'',
+  grille:null,
+  selectedAngle:null,
+  currentPost:'',
+  // Arsenal
+  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}')
 };
 
-// ═══════════════════════════════════════════
-// MODULE ILLUSIONS
-// ═══════════════════════════════════════════
-const ILLUSIONS = {
-  itachi: { nom:'Genjutsu', mecanique:'Post = démonstration. Le lecteur est sous illusion, le post la brise. Il découvre que ce quil prenait pour vrai est faux.',
-    instruction:'Fais croire au lecteur quil lit un post normal. Puis brise cette croyance. Montre-lui que ce quil pensait savoir est faux. La dernière phrase doit le laisser sans repère.' },
-  joker: { nom:'Chaos Calculé', mecanique:'Pas de hook visible, rupture immédiate. Chaque phrase est imprévisible.',
-    instruction:'Ne suis AUCUNE structure visible. Ouvre par une provocation. Garde le lecteur en haleine par limprévisible.' },
-  tyler: { nom:'Destruction du Confort', mecanique:'Attaque frontale des croyances du lecteur.',
-    instruction:'Sois violent. Attaque ce que le lecteur croit être une qualité. Aucune caresse.' },
-  cobb: { nom:'Inception', mecanique:'Le post ne vend pas, il implante. Lidée est déposée sans argumentation.',
-    instruction:'Nargumente jamais. Dépose une idée simple. La dernière phrase est une graine.' },
-  mrrobot: { nom:'Bug dans la Matrice', mecanique:'Dénonce le système, brise le quatrième mur.',
-    instruction:'Parle directement au lecteur. Dis "tu". Montre-lui que le jeu est truqué.' },
-  youssoupha: { nom:'Uppercut Philosophique', mecanique:'Vérité brutale, mot chirurgical, lucidité froide.',
-    instruction:'Utilise un vocabulaire simple et chirurgical. Ouvre par une vérité brutale. Ne hurle jamais.' },
-  scofield: { nom:'Blueprint', mecanique:'Post = plan dévasion invisible. Chaque ligne est un couloir.',
-    instruction:'Construis un plan invisible. Utilise "Lundi, Mardi..." pour créer une séquence.' },
-  moriarty: { nom:'Trois Coups dAvance', mecanique:'Le lecteur se rend compte quil a été mené.',
-    instruction:'Montre que tu as toujours un coup davance. Révèle à la fin que tout était prévu.' },
-  palpatine: { nom:'Faux Mentor', mecanique:'Pose la question qui déstabilise, sans donner la réponse.',
-    instruction:'Ne donne jamais la réponse. Pose une question qui force le lecteur à se confronter.' },
-  iago: { nom:'Poison Verbal', mecanique:'Chuchote une vérité que le lecteur cache.',
-    instruction:'Révèle une vérité que le lecteur cache. Montre-lui sa propre cicatrice sans jugement.' },
-  baelish: { nom:'Chaos comme Échelle', mecanique:'Cynique et lucide, montre que le désordre est un outil.',
-    instruction:'Sois cynique mais vrai. Montre que le chaos est une opportunité.' },
-  frank: { nom:'Quatrième Mur', mecanique:'Parle au lecteur en aparté, comme un secret.',
-    instruction:'Brise le quatrième mur. "Juste toi et moi." Parle en confidence.' },
-  tyrion: { nom:'Le Nain Contre le Géant', mecanique:'La phrase courte bat la phrase longue.',
-    instruction:'Utilise des phrases très courtes. Chaque phrase est un tendon coupé.' },
-  will_aime: { nom:'Vertige Contrôlé', mecanique:'Guide doucement le lecteur, puis les murs bougent.',
-    instruction:'Crée un vertige subtil. La Suture doit être énigmatique. Le lecteur doit relire.' },
-  hannibal: { nom:'Scalpel', mecanique:'Dissèque le lecteur sans douleur, nomme ce quil cache.',
-    instruction:'Dissèque sans faire mal. Nomme ce que le lecteur cache. Ton calme, précis.' }
-};
+// --- GÉNÉRATION D'UN POST (STUDIO) ---
+async function generatePost(biz, tension, anecdote, offre, profil, atelier, maitre) {
+  const prompt = `Tu es un copywriter d'élite. Écris UN SEUL post Facebook en français.
 
-const MAITRES = [
-  {id:'bismarck',nom:'Otto von Bismarck',categorie:'Stratège Silencieux',ton:'La force tranquille.'},
-  {id:'will_aime',nom:'Will Aime',categorie:'Miroir Vivant',ton:'Le court-métrage qui bascule.'},
-  {id:'itachi',nom:'Itachi Uchiha',categorie:'Briseur de Réalité',ton:'Projection noire, réveil brutal.'},
-  {id:'scofield',nom:'Michael Scofield',categorie:'Architecte de l\'Ombre',ton:'Le plan froid et imparable.'},
-  {id:'tyrion',nom:'Tyrion Lannister',categorie:'Miroir Vivant',ton:'La faiblesse retournée en pouvoir.'},
-  {id:'hannibal',nom:'Hannibal Lecter',categorie:'Miroir Vivant',ton:'La psychanalyse terrifiante.'},
-  {id:'joker',nom:'Le Joker',categorie:'Miroir Vivant',ton:'La provocation révélatrice.'},
-  {id:'moriarty',nom:'James Moriarty',categorie:'Architecte de l\'Ombre',ton:'Trois coups d\'avance.'},
-  {id:'palpatine',nom:'Empereur Palpatine',categorie:'Architecte de l\'Ombre',ton:'Le faux mentor.'},
-  {id:'iago',nom:'Iago',categorie:'Architecte de l\'Ombre',ton:'Le poison des mots.'},
-  {id:'cobb',nom:'Dominick Cobb',categorie:'Briseur de Réalité',ton:'L\'idée implantée.'},
-  {id:'mrrobot',nom:'Mr. Robot',categorie:'Briseur de Réalité',ton:'Le bug dans la matrice.'},
-  {id:'tyler',nom:'Tyler Durden',categorie:'Briseur de Réalité',ton:'Brûler le faux confort.'},
-  {id:'baelish',nom:'Petyr Baelish',categorie:'Stratège Silencieux',ton:'Tirer avantage du chaos.'},
-  {id:'frank',nom:'Frank Underwood',categorie:'Stratège Silencieux',ton:'La confidence complice.'},
-  {id:'v',nom:'V',categorie:'Stratège Silencieux',ton:'Faire exploser les croyances.'},
-  {id:'youssoupha',nom:'Youssoupha',categorie:'Briseur de Réalité',ton:'L\'uppercut qui t\'explique pourquoi tu saignes.'}
-];
-const CATEGORIES = ['Architecte de l\'Ombre','Briseur de Réalité','Miroir Vivant','Stratège Silencieux'];
+STRUCTURE OBLIGATOIRE :
+1. Hook : une phrase qui nomme la tension.
+2. T1 : l'anecdote fournie (prénom, situation, échec).
+3. T2 : une rupture qui inverse la croyance.
+4. Suture : maximum 8 mots, énigmatique.
+5. T3 : la solution (l'offre).
+6. T4 : une question ouverte.
 
-const state = {
-  step:'unlock', mode:'studio', biz:'', dialogueAnswers:[], profilData:null, profilMode:'désir',
-  atelier:null, format:null, maitre:null, currentPost:null,
-  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}'),
-  expertise:'', tensionSupplement:''
-};
-const dcState = { step:'input', post:'', contexte:'', analyse:null, contreAngle:null };
-const tkState = { offre:'', profil:'AUTOMATISEUR', mode:'désir', scripts:null };
+RÈGLES :
+- Tutoiement. Zéro emoji. Zéro hashtag.
+- Phrases très courtes. Prose chirurgicale.
+- Pas de "donc", "ainsi".
 
-window.go = function(m) {
-  state.mode = m;
-  document.querySelectorAll('.nav-item').forEach((el, i) => {
-    el.classList.toggle('active', ['studio','deconstruction','trockit','arsenal'][i] === m);
+PROFIL : ${profil}
+ATELIER : ${atelier}
+MAÎTRE : ${maitre}
+BUSINESS : ${biz}
+TENSION : ${tension}
+ANECDOTE : ${anecdote}
+OFFRE : ${offre}`;
+
+  return await callGeminiFlash(prompt, 0.3);
+}
+
+// --- NAVIGATION ---
+window.go = function(mode) {
+  state.mode = mode;
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    el.classList.toggle('active', ['studio','deconstruction','trockit','arsenal'][i]===mode);
   });
-  if (m === 'studio') renderStudio();
-  else if (m === 'deconstruction') renderDC();
-  else if (m === 'trockit') renderTK();
-  else if (m === 'arsenal') renderArsenal();
+  if(mode==='studio') renderStudioFlow();
+  else if(mode==='deconstruction') renderDC();
+  else if(mode==='trockit') renderTK();
+  else if(mode==='arsenal') renderArsenal();
 };
 
-/* ═══════════════════════════════════════ STUDIO ═══════════════════════════════════════ */
-function renderStudio() {
-  if (state.step === 'unlock') renderUnlock();
-  else if (state.step === 'gemini') renderGeminiGate();
-  else if (state.step === 'brief') renderBrief();
-  else if (state.step === 'dialogue') renderDialogue();
-  else if (state.step === 'profil') renderProfil();
-  else if (state.step === 'atelier') renderAtelier();
-  else if (state.step === 'format') renderFormat();
-  else if (state.step === 'pantheon') renderPantheon();
-  else if (state.step === 'result') renderResult();
+// ═══════════════════════════════════════ STUDIO ═══════════════════════════════════════
+function renderStudioFlow() {
+  const step = state.step;
+  if(step==='unlock') renderUnlock();
+  else if(step==='gemini') renderGeminiGate();
+  else if(step==='brief') renderBrief();
+  else if(step==='grille') renderGrille();
+  else if(step==='result') renderResult();
+  else renderUnlock();
 }
 
 function renderUnlock() {
-  render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Moment Troc · Studio</div><h1>Clé d'Accès</h1><p class="sub">Entre la clé fournie.</p><input id="key-input" type="text" placeholder="MT-2024X..." autocomplete="off" style="text-transform:uppercase;" /><div id="gate-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateMoment()">Entrer →</button></div>`);
+  render(`<div style="margin-top:60px;"><div class="eyebrow">Moment Troc · Studio</div><h1>Clé d'Accès</h1><p class="sub">Entre la clé fournie.</p><input id="key-input" type="text" placeholder="MT-2024X..." autocomplete="off" style="text-transform:uppercase;"><div id="gate-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateMoment()">Entrer →</button></div>`);
 }
 window.validateMoment = function() {
   const k = document.getElementById('key-input').value.trim().toUpperCase();
-  const err = document.getElementById('gate-err');
-  if(k===MASTER_KEY||VALID_KEYS.includes(k)) { setMomentKey(k); state.step='gemini'; renderGeminiGate(); }
-  else { err.textContent = 'Clé invalide.'; }
+  if(VALID_KEYS.includes(k)) { setMomentKey(k); state.step='gemini'; renderStudioFlow(); }
+  else { document.getElementById('gate-err').textContent='Clé invalide.'; }
 };
 
 function renderGeminiGate() {
-  render(`<div class="center" style="margin-top:60px;"><div class="eyebrow">Étape 2/2</div><h1>Clé API Gemini</h1><p class="sub">Gratuit sur <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p><input id="gemini-input" type="password" placeholder="AIza..." autocomplete="off" /><div id="gemini-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateGemini()">Activer →</button></div>`);
+  render(`<div style="margin-top:60px;"><div class="eyebrow">Étape 2/2</div><h1>Clé API Gemini</h1><p class="sub">Gratuit sur <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p><input id="gemini-input" type="password" placeholder="AIza..." autocomplete="off"><div id="gemini-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateGemini()">Activer →</button></div>`);
 }
 window.validateGemini = async function() {
   const k = document.getElementById('gemini-input').value.trim();
-  const err = document.getElementById('gemini-err');
-  if(!k.startsWith('AIza')||k.length<30) { err.textContent='Clé invalide.'; return; }
+  if(!k.startsWith('AIza')||k.length<30) { document.getElementById('gemini-err').textContent='Clé invalide.'; return; }
   try {
-    // Test avec le modèle principal
-    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GENERATION_MODEL}:generateContent?key=${k}`, {
+    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${k}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:'OK'}]}],generationConfig:{maxOutputTokens:3}})
     });
     if(!test.ok) throw new Error('Clé rejetée');
-    setGeminiKey(k); state.step='brief'; renderBrief();
-  } catch(e) { err.textContent = 'Clé rejetée.'; }
+    setGeminiKey(k); state.step='brief'; renderStudioFlow();
+  } catch(e) { document.getElementById('gemini-err').textContent='Clé rejetée.'; }
 };
 
-// ─── BRIEF ───
 function renderBrief() {
-  const saved = JSON.parse(localStorage.getItem('mt_brief')||'{}');
-  if(saved.biz) { state.biz = saved.biz; }
-  if(saved.expertise) { state.expertise = saved.expertise; }
-  if(saved.tension) { state.tensionSupplement = saved.tension; }
-  render(`<div class="eyebrow">Brief</div><h1>Décharge ton idée</h1>
-    <p class="sub">Plus tu es précis, plus le missile sera calibré.</p>
-    <div class="field">
-      <div class="flabel">Ton business en une phrase</div>
-      <textarea id="brief-input" rows="2" placeholder="Ex: Je vends une formation pour freelances...">${esc(state.biz)}</textarea>
-    </div>
-    <div class="field">
-      <div class="flabel">Qui est ton client ? Quelle est sa tension profonde ?</div>
-      <textarea id="tension-input" rows="3" placeholder="Ex: Il a déjà acheté 3 formations, rien n'a marché...">${esc(state.tensionSupplement)}</textarea>
-    </div>
-    <div class="field">
-      <div class="flabel">Vécu utilisateur (anecdote, prénom, résultat)</div>
-      <textarea id="expertise-input" rows="3" placeholder="Ex: Karim, 34 ans, postait depuis 4 mois...">${esc(state.expertise)}</textarea>
-    </div>
-    <button class="btn btn-primary" onclick="submitBrief()">Continuer →</button>
-    <p style="color:var(--text-dim);font-size:0.8rem;margin-top:12px;">Ces informations nourrissent l'IA pour un post chirurgical, pas un post générique. Remplis tout.</p>`);
+  render(`<div class="eyebrow">Brief</div><h1>Décharge ton business</h1>
+    <div class="field"><div class="flabel">Ton business</div><textarea id="biz" rows="2" placeholder="Ex: Formations pour freelances...">${state.biz}</textarea></div>
+    <div class="field"><div class="flabel">La tension client</div><textarea id="tension" rows="2" placeholder="Ex: Il croit que vendre est un don...">${state.tension}</textarea></div>
+    <div class="field"><div class="flabel">3 anecdotes (Prénom, échec, résultat)</div>
+    <textarea id="anecdote1" rows="2" placeholder="Anecdote 1">${state.anecdotes[0]||''}</textarea>
+    <textarea id="anecdote2" rows="2" placeholder="Anecdote 2" style="margin-top:8px;">${state.anecdotes[1]||''}</textarea>
+    <textarea id="anecdote3" rows="2" placeholder="Anecdote 3" style="margin-top:8px;">${state.anecdotes[2]||''}</textarea></div>
+    <div class="field"><div class="flabel">Ton offre</div><textarea id="offre" rows="2" placeholder="Ex: Formation rédaction persuasive...">${state.offre}</textarea></div>
+    <button class="btn btn-primary" onclick="goToGrille()">Générer la grille →</button>
+    <div id="brief-err" class="err-msg"></div>`);
 }
 
-window.submitBrief = async function() {
-  const raw = document.getElementById('brief-input').value.trim();
-  const tension = document.getElementById('tension-input')?.value.trim() || '';
-  const exp = document.getElementById('expertise-input')?.value.trim() || '';
-  if(!raw||raw.length<15) { alert('Décris ton business en au moins 15 caractères.'); return; }
-  state.biz = raw; state.expertise = exp; state.tensionSupplement = tension;
-  localStorage.setItem('mt_brief',JSON.stringify({biz:raw,expertise:exp,tension:tension}));
-  state.step='dialogue'; renderDialogue();
-  try {
-    const qPrompt = `Tu es l'agent Moment Troc. Business : "${raw}". Pose exactement 2 questions stratégiques. Retourne chaque question sur une ligne séparée.`;
-    const qRaw = await callGemini(qPrompt, true, 400, true);
-    const questions = qRaw.split('\n').filter(l=>l.trim().length>10).slice(0,2);
-    document.getElementById('dialogue-questions').innerHTML = questions.map((q,i)=>`<div class="chat-bubble"><strong>Agent</strong> : ${esc(q)}</div><textarea id="dial-answer-${i}" rows="2" placeholder="Ta réponse..."></textarea>`).join('');
-    document.getElementById('dialogue-box').classList.remove('off');
-  } catch(e) { document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
+window.goToGrille = function() {
+  const biz = document.getElementById('biz').value.trim();
+  const tension = document.getElementById('tension').value.trim();
+  const a1 = document.getElementById('anecdote1').value.trim();
+  const a2 = document.getElementById('anecdote2').value.trim();
+  const a3 = document.getElementById('anecdote3').value.trim();
+  const offre = document.getElementById('offre').value.trim();
+  if(!biz||!tension||!a1||!offre) { document.getElementById('brief-err').textContent='Remplis tous les champs.'; return; }
+  state.biz=biz; state.tension=tension; state.anecdotes=[a1,a2,a3]; state.offre=offre;
+  state.profil = detectProfil(tension);
+  // Grille inspirée de la structure thèmes/angles validée
+  state.grille = [
+    {theme:'LE PROFIL', angles:['Il ne veut pas comprendre','Il calcule tout','Il achète l\'image']},
+    {theme:'L\'ORGANE', angles:['Le chaos','Le calcul','L\'image']},
+    {theme:'LE DÉCLENCHEUR', angles:['La peur','Le désir','L\'urgence']},
+  ];
+  state.step='grille';
+  renderStudioFlow();
 };
 
-function renderDialogue() {
-  render(`<div class="eyebrow">Dialogue</div><h1>L'agent t'écoute</h1><div id="dialogue-questions"></div><div id="dialogue-box" class="off"><button class="btn btn-primary" onclick="submitDialogue()">Continuer →</button></div><div id="dialogue-err"></div>`);
-}
-
-window.submitDialogue = async function() {
-  const answers = []; for(let i=0;i<2;i++) { const el=document.getElementById('dial-answer-'+i); if(el)answers.push(el.value.trim()); }
-  state.dialogueAnswers = answers;
-  try {
-    const detectPrompt = `Business : "${state.biz}". Tension : "${state.tensionSupplement||''}". Réponses : "${answers.join(' ')}". Retourne UNIQUEMENT le JSON : {"profil":"AUTOMATISEUR","mode":"peur","organe":"Cortex Préfrontal","tension":"phrase intérieure"}. Profils : AUTOMATISEUR, OPTIMISEUR_VALEUR, OPTIMISEUR_PRIX, ÉLÉVATEUR, LIBÉRATEUR.`;
-    const raw = await callGemini(detectPrompt, false, 500, true);
-    const match = raw.match(/\{[\s\S]*?\}/); if(!match) throw new Error('Profil non détecté');
-    state.profilData = JSON.parse(match[0]); state.step='profil'; renderProfil();
-  } catch(e) { document.getElementById('dialogue-err').innerHTML = `<div class="err-msg">⚠ ${esc(e.message)}</div>`; }
-};
-
-function renderProfil() {
-  const p = state.profilData; const info = PROFILS[p.profil]||PROFILS.AUTOMATISEUR;
-  render(`<div class="eyebrow">Profil détecté</div><h1>${esc(p.profil)} <i>mode ${esc(p.mode)}</i></h1>
-    <div class="card"><div class="tag gold">${esc(p.organe)}</div><p style="margin-top:12px;font-style:italic;color:var(--text-mid);">"${esc(p.tension)}"</p></div>
-    <div class="grid-2">
-      <div class="card ${state.profilMode==='désir'?'':'gold'}" style="cursor:pointer;" onclick="state.profilMode='désir';renderProfil();"><div class="tag gold">🟢 Désir</div><p style="margin-top:8px;color:var(--text-mid);">Attiré par : ${esc(info.desir)}</p></div>
-      <div class="card ${state.profilMode==='peur'?'':'gold'}" style="cursor:pointer;" onclick="state.profilMode='peur';renderProfil();"><div class="tag gold">🔴 Peur</div><p style="margin-top:8px;color:var(--text-mid);">Fuit : ${esc(info.peur)}</p></div>
-    </div>
-    <button class="btn btn-primary" onclick="state.step='atelier';renderAtelier();">Choisir l'Atelier →</button>`);
-}
-
-function renderAtelier() {
-  render(`<div class="eyebrow">Atelier</div><h1>Choisis ta phase</h1>
-    <div class="grid-2">
-      <div class="card" onclick="selectAtelier(1)"><div class="tag gold">1</div><h3>Le Miroir</h3><p style="color:var(--text-dim);">Implanter l'expertise.</p></div>
-      <div class="card" onclick="selectAtelier(2)"><div class="tag gold">2</div><h3>La Forge</h3><p style="color:var(--text-dim);">Intensifier la douleur.</p></div>
-      <div class="card" onclick="selectAtelier(3)"><div class="tag gold">3</div><h3>Le Closing</h3><p style="color:var(--text-dim);">Vendre.</p></div>
-    </div>
-    <button class="btn btn-primary" id="btn-atelier-next" onclick="state.step='format';renderFormat();" disabled>Continuer →</button>`);
-}
-window.selectAtelier = function(id) { state.atelier=id; document.getElementById('btn-atelier-next').disabled=false; };
-
-function renderFormat() {
-  render(`<div class="eyebrow">Format</div><h1>Choisis ta forme</h1>
-    <div class="grid-2">
-      <div class="card" onclick="selectFormat('tweet')"><div class="tag gold">Tweet</div><p style="color:var(--text-dim);">60-90 mots.</p></div>
-      <div class="card" onclick="selectFormat('thread')"><div class="tag gold">Thread</div><p style="color:var(--text-dim);">Post + coms.</p></div>
-      <div class="card" onclick="selectFormat('court')"><div class="tag gold">Court Métrage</div><p style="color:var(--text-dim);">150-200 mots.</p></div>
-      <div class="card" onclick="selectFormat('plan')"><div class="tag gold">Plan</div><p style="color:var(--text-dim);">100-130 mots.</p></div>
-    </div>
-    <button class="btn btn-primary" id="btn-format-next" onclick="state.step='pantheon';renderPantheon();" disabled>Continuer →</button>`);
-}
-window.selectFormat = function(id) { state.format=id; document.getElementById('btn-format-next').disabled=false; };
-
-function renderPantheon() {
-  render(`<div class="eyebrow">Arsenal des Maîtres</div><h1>Choisis ton illusion</h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-      <button class="btn btn-ghost" onclick="filterMasters('Tous')" style="width:auto;padding:8px 14px;font-size:0.7rem;">Tous</button>
-      ${CATEGORIES.map(c=>`<button class="btn btn-ghost" onclick="filterMasters('${c}')" style="width:auto;padding:8px 14px;font-size:0.7rem;">${c}</button>`).join('')}
-    </div>
-    <div class="grid-2" id="masters-grid">
-      ${MAITRES.map(m=>{
-        const ill = ILLUSIONS[m.id];
-        return `<div class="master-card" id="master-${m.id}" data-cat="${m.categorie}" onclick="selectMaster('${m.id}')">
-          <div class="master-name">${m.nom}</div>
-          <div class="master-type">${m.categorie}</div>
-          ${ill ? `<div class="master-illusion">⚡ ${ill.nom}</div>` : ''}
-        </div>`;
-      }).join('')}
-    </div>
-    <div id="illusion-detail" class="illusion-detail off"></div>
-    <button class="btn btn-primary" id="btn-generate" onclick="generate()" disabled>Générer →</button>`);
-}
-window.filterMasters = function(cat) {
-  document.querySelectorAll('.master-card').forEach(c=>{
-    c.classList.toggle('off', cat!=='Tous' && c.getAttribute('data-cat')!==cat);
+function renderGrille() {
+  let html = `<div class="eyebrow">Grille</div><h1>Choisis ton angle</h1><p class="sub">Profil détecté : ${state.profil}</p>`;
+  state.grille.forEach(th => {
+    html += `<h3 style="margin-top:20px;">${th.theme}</h3>`;
+    th.angles.forEach(ang => {
+      html += `<div class="angle-card" onclick="selectAngle('${th.theme}','${ang}')">${ang}</div>`;
+    });
   });
-};
-window.selectMaster = function(id) {
-  state.maitre = MAITRES.find(m=>m.id===id);
-  document.querySelectorAll('.master-card').forEach(c=>c.classList.remove('selected'));
-  const card = document.getElementById('master-'+id);
-  if(card) card.classList.add('selected');
-  document.getElementById('btn-generate').disabled=false;
-  const ill = ILLUSIONS[id];
-  const detail = document.getElementById('illusion-detail');
-  if(ill && detail) {
-    detail.innerHTML = `<div class="ill-name">⚡ ${ill.nom}</div><div class="ill-desc">${ill.mecanique}</div>`;
-    detail.classList.remove('off');
-  } else if(detail) { detail.classList.add('off'); }
+  html += `<button class="btn btn-primary" id="btn-post" onclick="generateStudioPost()" disabled>Générer le post →</button>`;
+  render(html);
+}
+
+window.selectAngle = function(theme, angle) {
+  state.selectedAngle = {theme, angle};
+  document.querySelectorAll('.angle-card').forEach(c=>c.classList.remove('selected'));
+  event.target.classList.add('selected');
+  document.getElementById('btn-post').disabled = false;
 };
 
-// ─── GENERATE (CORRIGÉ DÉFINITIF) ───
-window.generate = async function() {
-  const p = state.profilData;
-  if(!p) { alert('Profil non détecté.'); return; }
-  const info = PROFILS[p.profil]||PROFILS.AUTOMATISEUR;
-  const m = state.maitre;
-  if(!m) { alert('Sélectionne un Maître.'); return; }
-  const modeDesc = state.profilMode==='peur'?info.peur:info.desir;
-  const atelierDesc = state.atelier===1?'Implanter.':state.atelier===2?'Intensifier.':'Vendre.';
-  const expertise = state.expertise || '';
-  const tensionSupp = state.tensionSupplement || '';
-  const illusion = ILLUSIONS[m.id];
-
-  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille…</h1>
-    <div class="card">
-      <p style="color:var(--text-dim);">${esc(m.nom)} · ${illusion?illusion.nom:'Style classique'} × ${esc(p.profil)}</p>
-      <div class="progress"><div class="progress-fill"></div></div>
-    </div>`);
-
+window.generateStudioPost = async function() {
+  const {theme, angle} = state.selectedAngle;
+  const anecdote = state.anecdotes[Math.floor(Math.random()*3)];
+  const ateliers = ['Miroir','Forge','Closing'];
+  const atelier = ateliers[Math.floor(Math.random()*3)];
+  const maitres = ['Will Aime','Itachi','Hannibal','Youssoupha','Scofield','Frank','Tyrion'];
+  const maitre = maitres[Math.floor(Math.random()*7)];
+  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille...</h1><div class="card"><p>Thème : ${theme} / ${angle}</p><p>Profil : ${state.profil} | Atelier : ${atelier} | Maître : ${maitre}</p><div class="progress"><div class="progress-fill"></div></div></div>`);
   try {
-    const prompt = `Tu es un ghostwriter du laboratoire Moment Troc.
-
-TU INCARNES : ${m.nom}.
-Catégorie : ${m.categorie}.
-
-ILLUSION ACTIVE : ${illusion ? illusion.nom + ' — ' + illusion.mecanique : 'Style classique'}
-INSTRUCTION MAÎTRE : ${illusion ? illusion.instruction : 'Applique la structure standard avec le ton défini.'}
-
-PROFIL CIBLE : ${p.profil} (${info.organe}).
-MODE : ${state.profilMode} (${modeDesc}).
-TENSION : "${p.tension}".
-TENSION SUPPLÉMENTAIRE : "${tensionSupp}".
-BUSINESS : ${state.biz}.
-ATELIER : ${atelierDesc}.
-FORMAT : ${state.format}.
-${expertise ? `VÉCU UTILISATEUR : "${expertise}"` : 'Invente une anecdote crédible avec prénom et résultat.'}
-
-STRUCTURE IMPÉRATIVE :
-Hook → T1 (Expérience concrète avec prénom) → T2 (Rupture : une phrase qui renverse tout) → Suture (1 phrase, max 8 mots, énigmatique) → T3 (Mise en lumière, solution) → T4 (Permission, question douce sans CTA agressif).
-
-RÈGLES ABSOLUES :
-- Aucun remplissage. Chaque phrase doit avoir un but.
-- Zéro emoji. Zéro point d'exclamation. Zéro "bonjour à tous".
-- Pas de "donc", "ainsi", "c'est pourquoi". Les phrases se suivent sans béquille.
-- Pas de "Peace", pas de signature.
-- T2 = une seule phrase. Pas de commentaire.
-- Le silence entre les blocs est une arme. Ne le comble pas.`;
-
-    const text = await callGeminiFlash(prompt, 1400, 0.3);
-    state.currentPost = text; state.step='result'; renderResult();
-  } catch(e) { app.innerHTML+=`<div class="err-msg">${esc(e.message)}</div>`; }
+    const post = await generatePost(state.biz, state.tension, anecdote, state.offre, state.profil, atelier, maitre);
+    state.currentPost = post;
+    state.step='result';
+    renderStudioFlow();
+  } catch(e) {
+    app.innerHTML+=`<div class="err-msg">Erreur : ${e.message}</div>`;
+  }
 };
 
 function renderResult() {
-  const illusion = state.maitre ? ILLUSIONS[state.maitre.id] : null;
-  render(`<div class="eyebrow">Post généré</div><h1>Ton missile</h1>
-    ${illusion ? `<div class="tag illusion" style="margin-bottom:12px;">⚡ ${illusion.nom}</div>` : ''}
-    <div class="card" style="border-top-color:var(--accent);">
-      <div class="card-header"><div><span class="tag gold">${esc(state.profilData.profil)}</span><span class="tag gold">Atelier ${state.atelier}</span></div></div>
-      <div class="post-content">${esc(state.currentPost)}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(state.currentPost)},this)">Copier</button>
-        <button class="btn btn-ghost" onclick="state.step='pantheon';renderPantheon();">Nouveau Maître</button>
-        <button class="btn btn-primary" id="btn-save-arsenal" onclick="saveToArsenal()">Sauvegarder</button>
-      </div>
-    </div>
-    <button class="btn btn-ghost" onclick="state.step='brief';renderBrief();">← Nouveau brief</button>`);
+  render(`<div class="eyebrow">Post généré</div><div class="card"><span class="tag gold">${state.profil}</span><div class="post-content">${esc(state.currentPost)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(state.currentPost)},this)">Copier</button><button class="btn btn-ghost" onclick="state.step='grille';renderStudioFlow();">Autre angle</button><button class="btn btn-primary" onclick="saveToArsenal()">Sauvegarder</button></div></div>`);
 }
 
-/* ═══════════════════════════════════════ DÉCONSTRUCTION ═══════════════════════════ */
-function renderDC() { /* ... identique à la version précédente ... */ }
-window.selDc = function(el) { document.querySelectorAll('[data-dcmode]').forEach(e=>e.classList.remove('on')); el.classList.add('on'); };
+// ═══════════════════════════════════════ DÉCONSTRUCTION ═══════════════════════════
+function renderDC() {
+  render(`<div class="eyebrow">Déconstruction</div><h1>L'agent dissèque</h1><p class="sub">Colle un post.</p>
+    <textarea id="dc-post" rows="8" placeholder="Colle ici..."></textarea>
+    <textarea id="dc-contexte" rows="2" placeholder="Contexte..." style="margin-top:12px;"></textarea>
+    <button class="btn btn-primary" onclick="runDC()">Autopsie →</button>
+    <div id="dc-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
+    <div id="dc-error" class="off"></div><div id="dc-result" class="off"></div>`);
+}
 window.runDC = async function() {
   const post = document.getElementById('dc-post').value.trim();
-  if (!post || post.length < 30) return;
+  if (!post || post.length<30) return;
   document.getElementById('dc-prog').classList.remove('off');
+  document.getElementById('dc-result').classList.add('off');
   try {
-    const raw = await callGemini(post.slice(0,1500), false, 900);
-    const contre = await callGemini(`Contre-angle pour : "${post.slice(0,800)}". T1-T2-Suture-T3-T4.`, false, 800);
-    document.getElementById('dc-result').innerHTML = `<div class="card"><div class="eyebrow">Rapport</div><p>${esc(raw)}</p></div><div class="card gold"><div class="eyebrow">Contre-Angle</div><div class="post-content">${esc(contre)}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(contre)},this)">Copier</button></div>`;
+    const raw = await callGeminiLite(`Analyse ce post en 3 phrases : ${post.slice(0,1000)}`);
+    const contre = await callGeminiLite(`Contre-angle pour : "${post.slice(0,800)}". T1-T2-Suture-T3-T4.`);
+    document.getElementById('dc-prog').classList.add('off');
     document.getElementById('dc-result').classList.remove('off');
-  } catch(e) { /* ... */ }
-  document.getElementById('dc-prog').classList.add('off');
+    document.getElementById('dc-result').innerHTML = `<div class="card"><div class="eyebrow">Rapport</div><p>${esc(raw)}</p></div><div class="card gold"><div class="eyebrow">Contre-Angle</div><div class="post-content">${esc(contre)}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(contre)},this)">Copier</button></div>`;
+  } catch(e) { document.getElementById('dc-error').innerHTML=`<div class="err-msg">${e.message}</div>`; document.getElementById('dc-error').classList.remove('off'); }
 };
 
-/* ═══════════════════════════════════════ TROC KIT ═══════════════════════════ */
-function renderTK() { /* ... identique ... */ }
+// ═══════════════════════════════════════ TROC KIT ═══════════════════════════
+let tkProfil = 'AUTOMATISEUR', tkMode = 'désir';
+function renderTK() {
+  const profils = ['AUTOMATISEUR','OPTIMISEUR_VALEUR','OPTIMISEUR_PRIX','ÉLÉVATEUR','LIBÉRATEUR'];
+  render(`<div class="eyebrow">Troc Kit</div><h1>Le script</h1>
+    <textarea id="tk-offre" rows="3" placeholder="Ton offre..."></textarea>
+    <div class="field"><div class="flabel">Profil</div><div class="sgrid">${profils.map(p=>`<div class="sitem ${tkProfil===p?'on':''}" onclick="tkProfil='${p}';renderTK();">${p.replace('_',' ')}</div>`).join('')}</div></div>
+    <div class="field"><div class="flabel">Mode</div><div class="sgrid c3"><div class="sitem ${tkMode==='désir'?'on':''}" onclick="tkMode='désir';renderTK();">🟢 Désir</div><div class="sitem ${tkMode==='peur'?'on':''}" onclick="tkMode='peur';renderTK();">🔴 Peur</div></div></div>
+    <button class="btn btn-primary" onclick="runTK()">Générer →</button>
+    <div id="tk-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
+    <div id="tk-result" class="off"></div>`);
+}
 window.runTK = async function() {
   const offre = document.getElementById('tk-offre').value.trim();
-  if (!offre) return;
+  if(!offre) return;
   document.getElementById('tk-prog').classList.remove('off');
   try {
-    const raw = await callGemini(`Offre : "${offre}". Profil : ${tkState.profil}. Génère 4 scripts (---SEP---) : Approche, Valeur, Relance, Objection.`, false, 1200);
-    document.getElementById('tk-result').innerHTML = raw.split('---SEP---').map(s => `<div class="card"><div class="post-content">${esc(s.trim())}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(s.trim())},this)">Copier</button></div>`).join('');
+    const raw = await callGeminiLite(`Offre : "${offre}". Profil : ${tkProfil}. Génère 4 scripts (---SEP---) : Approche, Valeur, Relance, Objection.`);
+    document.getElementById('tk-prog').classList.add('off');
     document.getElementById('tk-result').classList.remove('off');
-  } catch(e) { /* ... */ }
-  document.getElementById('tk-prog').classList.add('off');
+    document.getElementById('tk-result').innerHTML = raw.split('---SEP---').map(s=>`<div class="card"><div class="post-content">${esc(s.trim())}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(s.trim())},this)">Copier</button></div>`).join('');
+  } catch(e) { document.getElementById('tk-prog').classList.add('off'); }
 };
 
-/* ═══════════════════════════════════════ ARSENAL ═══════════════════════════ */
-window.saveToArsenal = function() { /* ... identique ... */ };
-function renderArsenal() { /* ... identique ... */ }
-window.viewPost = function(day) { /* ... identique ... */ };
+// ═══════════════════════════════════════ ARSENAL ═══════════════════════════
+window.saveToArsenal = function() {
+  if(!state.currentPost) return;
+  let day = null;
+  for(let d=2; d<=30; d+=2) { if(!state.arsenalPosts[d]){ day=d; break; } }
+  if(!day){ alert('Mois plein.'); return; }
+  state.arsenalPosts[day] = { text:state.currentPost, profil:state.profil, savedAt:Date.now() };
+  localStorage.setItem('mt_arsenal_posts', JSON.stringify(state.arsenalPosts));
+  alert('Sauvegardé au jour '+day);
+};
+function renderArsenal() {
+  let h = '<div class="eyebrow">Arsenal</div><h1>Calendrier</h1><div class="cal">';
+  for(let d=1; d<=30; d++) {
+    const p = state.arsenalPosts[d];
+    if(d%2===0) {
+      if(p) h += `<div class="cal-day set" onclick="viewPost(${d})"><span class="num">J${d}</span></div>`;
+      else h += `<div class="cal-day placeholder" onclick="viewPost(${d})"><span class="num">+</span></div>`;
+    } else h += `<div class="cal-day off"><span class="num">J${d}</span></div>`;
+  }
+  h += '</div><div id="arsenal-detail" class="day-detail off"></div>';
+  render(h);
+}
+window.viewPost = function(day) {
+  const p = state.arsenalPosts[day];
+  const el = document.getElementById('arsenal-detail');
+  if(!p) { el.innerHTML = `<div class="eyebrow">Jour ${day}</div><p>Vide.</p>`; el.classList.remove('off'); return; }
+  el.innerHTML = `<div class="eyebrow">Jour ${day}</div><div class="preview">${esc(p.text)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(p.text)},this)">Copier</button></div>`;
+  el.classList.remove('off');
+};
 
+// --- INITIALISATION ---
 window.onload = function() {
-  try {
-    const mk = localStorage.getItem('mt_moment_key');
-    const gk = localStorage.getItem('mt_gemini_key');
-    const vk = ['MKB2000-2022A','MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T'];
-    if (!mk || !vk.includes(mk)) state.step = 'unlock';
-    else if (!gk || gk.length < 30) state.step = 'gemini';
-    else state.step = 'brief';
-  } catch (e) { state.step = 'unlock'; }
-  renderStudio();
+  const mk = getMomentKey();
+  const gk = getGeminiKey();
+  if(mk && VALID_KEYS.includes(mk) && gk && gk.length>30) {
+    state.step='brief';
+  } else if(mk && VALID_KEYS.includes(mk)) {
+    state.step='gemini';
+  } else {
+    state.step='unlock';
+  }
+  renderStudioFlow();
 };
 </script>
 </body>
