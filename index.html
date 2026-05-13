@@ -1,397 +1,348 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moment Troc · Studio</title>
-    <style>
-        :root {
-            --bg: #080808; --surface: #0F0F0F; --surface2: #141414;
-            --accent: #C9A84C; --accent-dim: rgba(201,168,76,0.18); --accent-line: rgba(201,168,76,0.35); --accent-glow: rgba(201,168,76,0.12);
-            --text: #F0EAD6; --text-mid: rgba(240,234,214,0.60); --text-dim: rgba(240,234,214,0.28); --text-ghost: rgba(240,234,214,0.10);
-            --border: rgba(201,168,76,0.10); --border-hard: rgba(201,168,76,0.22); --ok: #4a9e6a; --err: #9e4a4a;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:'Georgia',serif; font-size:1.05rem; line-height:1.7; min-height:100vh; padding:28px 18px 120px; max-width:720px; margin:0 auto; }
-        .off { display:none!important; }
-        h1 { font-family:'Georgia',serif; font-size:clamp(2.4rem,8vw,3.2rem); font-weight:700; line-height:0.95; text-transform:uppercase; color:var(--text); }
-        h1 i { font-style:italic; font-weight:700; color:var(--accent); text-transform:none; font-size:0.85em; display:block; }
-        .eyebrow { font-family:'Courier New',monospace; font-size:0.65rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
-        .sub { color:var(--text-mid); font-size:1rem; margin:14px 0 24px; font-style:italic; }
-        textarea, input[type="text"], input[type="password"] { width:100%; background:var(--surface2); border:1px solid var(--border); border-left:2px solid var(--accent-line); color:var(--text); padding:16px 18px; font-family:'Georgia',serif; font-size:1rem; line-height:1.7; resize:vertical; outline:none; border-radius:2px; }
-        textarea:focus, input:focus { border-left-color:var(--accent); }
-        .btn { display:block; width:100%; padding:16px 20px; border:none; font-family:'Courier New',monospace; font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; cursor:pointer; margin-top:12px; border-radius:2px; transition:all 0.2s ease; }
-        .btn-primary { background:transparent; color:var(--accent); border:1px solid var(--accent-line); border-left:3px solid var(--accent); }
-        .btn-primary:hover { background:var(--accent-dim); border-color:var(--accent); }
-        .btn-ghost { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
-        .btn-ghost:hover { border-color:var(--accent-line); color:var(--text); }
-        .btn:disabled { opacity:0.25; cursor:not-allowed; }
-        .card { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--accent-line); padding:22px 20px; margin-bottom:18px; border-radius:2px; position:relative; overflow:hidden; }
-        .card::before { content:''; position:absolute; top:0; left:0; width:40px; height:2px; background:var(--accent); }
-        .card.gold { border-top-color:var(--accent); }
-        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
-        .tag { display:inline-block; font-family:'Courier New',monospace; font-size:0.62rem; letter-spacing:2px; padding:4px 10px; text-transform:uppercase; border-radius:2px; margin-right:6px; }
-        .tag.gold { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-line); }
-        .tag.line { background:transparent; border:1px solid var(--border-hard); color:var(--text-dim); }
-        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-        .post-content { font-family:'Georgia',serif; font-size:1.15rem; line-height:2; white-space:pre-wrap; color:var(--text); padding:28px 0; }
-        .err-msg { background:rgba(158,74,74,0.08); border-left:2px solid var(--err); padding:12px 16px; margin:12px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--err); border-radius:0 2px 2px 0; }
-        .ok-msg { background:rgba(74,158,106,0.08); border-left:2px solid var(--ok); padding:10px 14px; margin:8px 0; font-family:'Courier New',monospace; font-size:0.8rem; color:var(--ok); border-radius:0 2px 2px 0; }
-        .progress { width:100%; height:2px; background:var(--border); margin-top:16px; border-radius:2px; overflow:hidden; }
-        .progress-fill { width:0%; height:100%; background:var(--accent); border-radius:2px; animation:fill 2.2s ease infinite; }
-        @keyframes fill { 0%{width:0%;} 50%{width:80%;} 100%{width:0%;} }
-        .field { margin-bottom:24px; }
-        .flabel { font-family:'Courier New',monospace; font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
-        .sgrid { display:flex; gap:8px; flex-wrap:wrap; }
-        .sgrid.c3 .sitem { flex:1; min-width:90px; }
-        .sitem { background:var(--surface2); border:1px solid var(--border); padding:12px 10px; text-align:center; cursor:pointer; border-radius:2px; transition:all 0.2s ease; }
-        .sitem.on { background:var(--accent-dim); border-color:var(--accent-line); border-top:2px solid var(--accent); }
-        .sitem .sname { font-family:'Courier New',monospace; font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; color:var(--text); }
-        .sitem.on .sname { color:var(--accent); }
-        .angle-card { background:var(--surface2); border:1px solid var(--border); padding:14px; cursor:pointer; border-radius:2px; transition:all 0.2s; }
-        .angle-card:hover { border-color:var(--accent-line); background:var(--accent-dim); }
-        .angle-card.selected { border-color:var(--accent); }
-        .cal { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:16px; }
-        .cal-day { aspect-ratio:1; background:var(--surface2); border:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; position:relative; border-radius:2px; font-family:'Courier New',monospace; }
-        .cal-day.num { font-size:1rem; color:var(--text-dim); }
-        .cal-day.ep { font-size:0.55rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); margin-top:3px; }
-        .cal-day.off { opacity:0.22; cursor:default; pointer-events:none; }
-        .cal-day.set { background:var(--surface); border:1px solid var(--accent-line); border-top:2px solid var(--accent); cursor:pointer; }
-        .cal-day.set .num { color:var(--text); font-weight:500; }
-        .cal-day.set:hover { background:var(--accent-dim); border-color:var(--accent); }
-        .cal-day.placeholder { cursor:pointer; border-top:2px solid var(--text-ghost); }
-        .cal-day.placeholder:hover { border-top-color:var(--accent-line); background:var(--surface); }
-        .day-detail { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--accent); padding:22px 20px; margin-top:16px; border-radius:2px; position:relative; }
-        .day-detail::before { content:''; position:absolute; top:0; left:0; width:60px; height:2px; background:var(--accent); }
-        .preview { font-family:'Georgia',serif; font-size:1rem; line-height:1.85; color:var(--text-mid); white-space:pre-wrap; margin:14px 0; border-left:1px solid var(--accent-line); padding-left:16px; font-style:italic; }
-        .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
-        .actions .btn { flex:1; min-width:120px; margin-top:0; }
-        .bottom { position:fixed; bottom:0; left:0; right:0; background:rgba(8,8,8,0.96); border-top:1px solid var(--border-hard); display:flex; justify-content:space-around; padding:6px 0 8px; z-index:1000; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
-        .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:8px 14px; transition:all 0.2s ease; font-family:'Courier New',monospace; font-size:0.58rem; letter-spacing:1.5px; color:var(--text-dim); text-transform:uppercase; border:none; background:none; position:relative; }
-        .nav-item::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:1px; background:var(--accent); transition:width 0.2s ease; }
-        .nav-item.active { color:var(--accent); }
-        .nav-item.active::after { width:24px; }
-        .nav-ico { font-size:1.1rem; }
-        a { color:var(--accent); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Moment Troc · Studio V4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Space+Mono:wght@400;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F0E8;--surface:#EDE8DF;--surface2:#E4DDD4;--ink:#1A1714;--ink-mid:rgba(26,23,20,0.52);--ink-dim:rgba(26,23,20,0.25);--rust:#B5451B;--rust-dim:rgba(181,69,27,0.10);--rust-line:rgba(181,69,27,0.28);--border:rgba(26,23,20,0.09);--border-hard:rgba(26,23,20,0.18);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--ink);font-family:'Playfair Display',Georgia,serif;font-size:1rem;line-height:1.75;min-height:100vh;padding:32px 20px 110px;max-width:660px;margin:0 auto;}
+.eyebrow{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--rust);margin-bottom:8px;display:block;}
+h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2.2rem,9vw,3rem);font-weight:900;line-height:0.95;text-transform:uppercase;letter-spacing:-0.02em;color:var(--ink);margin-bottom:10px;}
+.sub{font-style:italic;color:var(--ink-mid);font-size:0.93rem;margin-bottom:24px;line-height:1.6;}
+textarea,input[type=password]{width:100%;background:var(--surface2);border:none;border-left:3px solid var(--rust-line);color:var(--ink);padding:14px 16px;font-family:'Playfair Display',serif;font-size:1rem;line-height:1.7;resize:vertical;outline:none;margin-top:8px;transition:border-color 0.2s;-webkit-appearance:none;border-radius:0;}
+textarea:focus,input:focus{border-left-color:var(--rust);}
+.btn{display:block;width:100%;padding:15px 18px;border:none;font-family:'Space Mono',monospace;font-size:0.63rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;margin-top:10px;transition:all 0.18s;background:transparent;text-align:center;text-decoration:none;border-radius:0;}
+.btn-primary{color:var(--rust);border:1px solid var(--rust-line);border-left:3px solid var(--rust);}
+.btn-primary:hover,.btn-primary:active{background:var(--rust-dim);}
+.btn-ghost{color:var(--ink-mid);border:1px solid var(--border-hard);}
+.btn-ghost:hover,.btn-ghost:active{border-color:var(--rust-line);color:var(--ink);}
+.btn-row{display:flex;gap:8px;margin-top:10px;}
+.btn-row .btn{margin-top:0;flex:1;}
+.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--rust);padding:18px;margin-bottom:14px;}
+.card-label{font-family:'Space Mono',monospace;font-size:0.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-bottom:10px;display:block;}
+.diag-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:0.65rem;gap:12px;}
+.diag-row:last-child{border-bottom:none;}
+.diag-key{color:var(--ink-dim);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+.diag-val{color:var(--rust);text-align:right;max-width:65%;line-height:1.4;}
+.niveau-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 16px;}
+.niv{background:var(--surface2);border:1px solid var(--border-hard);border-left:3px solid transparent;padding:13px 11px;cursor:pointer;transition:all 0.18s;text-align:left;}
+.niv.on{border-left-color:var(--rust);background:var(--rust-dim);}
+.niv .nt{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--rust);display:block;margin-bottom:3px;}
+.niv .nd{font-style:italic;font-size:0.78rem;color:var(--ink-mid);line-height:1.35;}
+.maitre-preview{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--rust-line);padding:14px;margin-bottom:8px;}
+.maitre-preview .mp-name{font-family:'Archivo Black',sans-serif;font-size:0.82rem;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:2px;}
+.maitre-preview .mp-il{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--rust);display:block;margin-bottom:4px;}
+.maitre-preview .mp-desc{font-style:italic;font-size:0.8rem;color:var(--ink-mid);line-height:1.4;}
+.prompt-box{background:var(--surface2);border-left:3px solid var(--rust);padding:16px;font-family:'Space Mono',monospace;font-size:0.68rem;line-height:1.85;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;margin:10px 0;}
+.arsenal-item{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--rust-line);padding:16px;margin-bottom:10px;position:relative;}
+.arsenal-item .am{font-family:'Space Mono',monospace;font-size:0.53rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;}
+.arsenal-item .at{font-size:0.93rem;line-height:1.7;color:var(--ink);white-space:pre-wrap;}
+.arsenal-item .ad{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--ink-dim);font-family:'Space Mono',monospace;font-size:0.53rem;cursor:pointer;text-transform:uppercase;}
+.err{color:#c0392b;font-family:'Space Mono',monospace;font-size:0.68rem;margin-top:8px;padding:10px 14px;background:rgba(192,57,43,0.05);border-left:3px solid #c0392b;}
+.off{display:none!important;}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border-hard);display:flex;justify-content:space-around;padding:8px 0 14px;z-index:100;}
+.nb{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 16px;opacity:0.3;transition:opacity 0.2s;}
+.nb.on{opacity:1;}
+.nb .ni{font-size:1.15rem;}
+.nb .nl{font-family:'Space Mono',monospace;font-size:0.46rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink);}
+</style>
 </head>
 <body>
 <div id="app"></div>
-<nav class="bottom">
-    <button class="nav-item active" onclick="go('studio')"><span class="nav-ico">🎯</span>Studio</button>
-    <button class="nav-item" onclick="go('deconstruction')"><span class="nav-ico">🔬</span>Déconstruire</button>
-    <button class="nav-item" onclick="go('trockit')"><span class="nav-ico">💎</span>Troc Kit</button>
-    <button class="nav-item" onclick="go('arsenal')"><span class="nav-ico">📅</span>Arsenal</button>
+<nav class="nav" id="main-nav" style="display:none;">
+  <button class="nb on" id="nb-studio" onclick="goNav('studio')"><span class="ni">✦</span><span class="nl">Studio</span></button>
+  <button class="nb" id="nb-arsenal" onclick="goNav('arsenal')"><span class="ni">◈</span><span class="nl">Arsenal</span></button>
 </nav>
 <script>
-// ═══════════════════════════════════════════
-// MOMENT TROC · STUDIO — Code complet
-// ═══════════════════════════════════════════
+var KEYS=['MKB2000-2022A','MT-A1B2-C3D4','MT-E5F6-G7H8','MT-I9J0-K1L2','MT-M3N4-O5P6','MT-Q7R8-S9T0','MT-U1V2-W3X4','MT-Y5Z6-A7B8','MT-C9D0-E1F2','MT-G3H4-I5J6','MT-K7L8-M9N0','MT-O1P2-Q3R4','MT-S5T6-U7V8','MT-W9X0-Y1Z2','MT-A3B4-C5D6','MT-E7F8-G9H0','MT-I1J2-K3L4','MT-M5N6-O7P8','MT-Q9R0-S1T2','MT-U3V4-W5X6'];
 
-// --- CLÉS ET AUTHENTIFICATION ---
-const VALID_KEYS = ['MT-2024A','MT-2024B','MT-2024C','MT-2024D','MT-2024E','MT-2024F','MT-2024G','MT-2024H','MT-2024I','MT-2024J','MT-2024K','MT-2024L','MT-2024M','MT-2024N','MT-2024O','MT-2024P','MT-2024Q','MT-2024R','MT-2024S','MT-2024T','MKB2000-2022A'];
-function getMomentKey(){ return localStorage.getItem('mt_moment_key'); }
-function setMomentKey(k){ localStorage.setItem('mt_moment_key', k); }
-function getGeminiKey(){ return localStorage.getItem('mt_gemini_key'); }
-function setGeminiKey(k){ localStorage.setItem('mt_gemini_key', k); }
-
-const MODEL = 'gemini-2.5-flash'; // Modèle principal, plus puissant que Flash-Lite
-
-async function callGeminiFlash(prompt, temp=0.3, maxTokens=600) {
-  const key = getGeminiKey();
-  if(!key) throw new Error('Clé Gemini manquante');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
-  const res = await fetch(url, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:temp, maxOutputTokens:maxTokens} })
-  });
-  if(!res.ok) throw new Error('Erreur API');
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-}
-
-// Ancienne fonction pour modules secondaires (Déconstruction, Troc Kit)
-async function callGeminiLite(prompt) {
-  const key = getGeminiKey();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${key}`;
-  const res = await fetch(url, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.7, maxOutputTokens:800} })
-  });
-  if(!res.ok) throw new Error('Erreur API');
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-}
-
-// --- FONCTIONS UTILITAIRES ---
-const app = document.getElementById('app');
-function render(html) { app.innerHTML = html; }
-function esc(s) { return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function copyTxt(text, btn) { navigator.clipboard.writeText(text).then(()=>{ btn.textContent='✓ Copié'; setTimeout(()=>{ btn.textContent='Copier'; },2000); }); }
-
-// --- DÉTECTION AUTOMATIQUE DU PROFIL ---
-function detectProfil(tension) {
-  const t = tension.toLowerCase();
-  if(t.includes('chaos')||t.includes('étape')||t.includes('méthode')||t.includes('surcharge')) return 'AUTOMATISEUR';
-  if(t.includes('perte')||t.includes('argent')||t.includes('calcul')||t.includes('roi')) return 'OPTIMISEUR_VALEUR';
-  if(t.includes('image')||t.includes('statut')||t.includes('respect')) return 'ÉLÉVATEUR';
-  if(t.includes('différent')||t.includes('atypique')||t.includes('case')) return 'LIBÉRATEUR';
-  return 'AUTOMATISEUR';
-}
-
-// --- ÉTAT GLOBAL ---
-let state = {
-  mode:'studio',
-  step:'unlock', // 'unlock' | 'gemini' | 'brief' | 'grille' | 'result'
-  biz:'', tension:'', anecdotes:[], offre:'',
-  profil:'',
-  grille:null,
-  selectedAngle:null,
-  currentPost:'',
-  // Arsenal
-  arsenalPosts: JSON.parse(localStorage.getItem('mt_arsenal_posts')||'{}')
+var MAITRES={
+  bismarck:{n:'Bismarck',il:'Force Tranquille',im:'T1',desc:"Il n'argumente pas. Il decrete. T1 pose l'autorite sans l'expliquer. Ce qu'il ne fait pas : ne justifie jamais.",tags:['autorite','statut','leadership','credibilite']},
+  will_aime:{n:'Will Aime',il:'Vertige Controle',im:'Suture',desc:"Guide dans une piece familiere. La Suture fait basculer les murs. Ce qu'il ne fait pas : ne revele jamais trop tot.",tags:['emotion','transformation','reconnaissance','identite']},
+  itachi:{n:'Itachi',il:'Genjutsu',im:'T4',desc:"Le lecteur croit lire un post normal. T4 brise l'illusion. Ce qu'il ne fait pas : ne montre jamais le piege a l'avance.",tags:['illusion','revelation','surprise','profil']},
+  scofield:{n:'Scofield',il:'Blueprint',im:'T1',desc:"T1 construit un couloir invisible. Le lecteur suit sans voir le plan. Ce qu'il ne fait pas : n'explique jamais le plan.",tags:['acces','etapes','methode','systeme','technique','api','freelance']},
+  tyrion:{n:'Tyrion',il:'Scalpel Court',im:'T2',desc:"La phrase courte bat la longue. T2 est un coup de lame. Ce qu'il ne fait pas : ne s'explique jamais.",tags:['argumentation','objection','comparaison','prix']},
+  hannibal:{n:'Hannibal',il:'Scalpel',im:'T2',desc:"Dissèque sans douleur. T2 nomme ce que le lecteur cache. Ce qu'il ne fait pas : ne juge jamais.",tags:['psychologie','comportement','habitude','peur','diagnostic']},
+  joker:{n:'Le Joker',il:'Chaos Calcule',im:'T1',desc:"T1 ouvre par une verite absurde. Le lecteur rit jaune puis se reconnait. Ce qu'il ne fait pas : n'est jamais gratuit.",tags:['humour','ironie','paradoxe','marketing']},
+  moriarty:{n:'Moriarty',il:"3 Coups d'Avance",im:'T4',desc:"T4 revele que tout etait prevu. Ce qu'il ne fait pas : ne revele jamais avant T4.",tags:['strategie','intelligence','vente','prevision']},
+  palpatine:{n:'Palpatine',il:'Faux Mentor',im:'T4',desc:"Ne donne jamais la reponse. T4 pose la question qui destabilise. Ce qu'il ne fait pas : ne rassure jamais.",tags:['doute','questionnement','coaching','mentor']},
+  iago:{n:'Iago',il:'Poison Verbal',im:'Suture',desc:"La Suture chuchote ce que le lecteur refuse d'entendre. Ce qu'il ne fait pas : ne crie jamais.",tags:['verite','denial','inconfort','prise de conscience']},
+  cobb:{n:'Cobb',il:'Inception',im:'T4',desc:"T4 depose une idee simple presque anodine. Elle grandit apres la lecture. Ce qu'il ne fait pas : n'argumente jamais.",tags:['idee','influence','long terme']},
+  mrrobot:{n:'Mr. Robot',il:'Bug dans la Matrice',im:'T3',desc:"T3 denonce le systeme. Montre que le jeu est truque. Ce qu'il ne fait pas : ne propose jamais de consolation.",tags:['systeme','blocage','acces','carte bancaire','afrique','injustice']},
+  tyler:{n:'Tyler Durden',il:'Destruction du Confort',im:'T2',desc:"T2 attaque ce que le lecteur croit etre une qualite. Ce qu'il ne fait pas : ne menage jamais.",tags:['confort','securite','stagnation','routine']},
+  baelish:{n:'Baelish',il:'Chaos comme Echelle',im:'T3',desc:"T3 montre que le chaos est une opportunite. Ce qu'il ne fait pas : ne moralise jamais.",tags:['opportunite','chaos','marche','positionnement']},
+  frank:{n:'Frank Underwood',il:'4e Mur',im:'T1',desc:"T1 brise le quatrieme mur. Juste toi et moi. Ce qu'il ne fait pas : ne parle jamais a la foule.",tags:['confidence','secret','exclusivite','personal branding']},
+  v:{n:'V',il:'Revolution Silencieuse',im:'T4',desc:"T4 fait tomber un masque. Revele une verite cachee. Ce qu'il ne fait pas : ne crie jamais sa revolte.",tags:['liberation','verite','changement','mouvement']},
+  youssoupha:{n:'Youssoupha',il:'Uppercut Philosophique',im:'T2',desc:"Verite brutale en une phrase. T2 frappe et s'arrete. T3 releve ensuite. Ce qu'il ne fait pas : n'explique jamais l'uppercut.",tags:['verite','philosophie','realite','afrique','freelance']}
 };
 
-// --- GÉNÉRATION D'UN POST (STUDIO) ---
-async function generatePost(biz, tension, anecdote, offre, profil, atelier, maitre) {
-  const prompt = `Tu es un copywriter d'élite. Écris UN SEUL post Facebook en français.
-
-STRUCTURE OBLIGATOIRE :
-1. Hook : une phrase qui nomme la tension.
-2. T1 : l'anecdote fournie (prénom, situation, échec).
-3. T2 : une rupture qui inverse la croyance.
-4. Suture : maximum 8 mots, énigmatique.
-5. T3 : la solution (l'offre).
-6. T4 : une question ouverte.
-
-RÈGLES :
-- Tutoiement. Zéro emoji. Zéro hashtag.
-- Phrases très courtes. Prose chirurgicale.
-- Pas de "donc", "ainsi".
-
-PROFIL : ${profil}
-ATELIER : ${atelier}
-MAÎTRE : ${maitre}
-BUSINESS : ${biz}
-TENSION : ${tension}
-ANECDOTE : ${anecdote}
-OFFRE : ${offre}`;
-
-  return await callGeminiFlash(prompt, 0.3);
-}
-
-// --- NAVIGATION ---
-window.go = function(mode) {
-  state.mode = mode;
-  document.querySelectorAll('.nav-item').forEach((el,i) => {
-    el.classList.toggle('active', ['studio','deconstruction','trockit','arsenal'][i]===mode);
-  });
-  if(mode==='studio') renderStudioFlow();
-  else if(mode==='deconstruction') renderDC();
-  else if(mode==='trockit') renderTK();
-  else if(mode==='arsenal') renderArsenal();
+var PROFILS={
+  AUTOMATISEUR:{organe:'Cortex Prefrontal',tension:"J'ai tout essaye, rien ne marche, je suis noye.",desir:"Un rail. Une sequence precise. Un resultat aujourd'hui.",mots:['methode','etapes','systeme','acces','simple','rapide','chemin','sequence','plan','guide','outil','automatisation','workflow','process','api','freelance','intermediaire'],maitres:['scofield','mrrobot','itachi']},
+  OPTIMISEUR_VALEUR:{organe:'Striatum',tension:"J'investis sans savoir si ca va rapporter.",desir:"La certitude que chaque franc investi rapporte.",mots:['roi','rentable','retour','investissement','calcul','resultat','efficace','rendement','budget','marge','valeur','productivite'],maitres:['tyrion','moriarty','bismarck']},
+  OPTIMISEUR_PRIX:{organe:'Insula',tension:"J'ai peur de me faire arnaquer encore.",desir:"Le juste prix. La transparence totale.",mots:['arnaque','prix','cout','confiance','risque','juste','transparent','garantie','remboursement'],maitres:['hannibal','iago','palpatine']},
+  ELEVATEUR:{organe:'Noyau Accumbens',tension:"Les autres reussissent, pas moi. Je ne suis pas credible.",desir:"L'image qui force le respect avant meme de parler.",mots:['image','statut','respect','credibilite','reconnaissance','prestige','marque','premium','elite','regard','admiration'],maitres:['frank','will_aime','baelish']},
+  LIBERATEUR:{organe:'Cortex Cingulaire',tension:"Les methodes standard ne marchent pas pour moi.",desir:"Qu'on reconnaisse ma singularite.",mots:['different','unique','sur mesure','adapte','liberte','singulier','atypique','normes','independance'],maitres:['youssoupha','v','joker']}
 };
 
-// ═══════════════════════════════════════ STUDIO ═══════════════════════════════════════
-function renderStudioFlow() {
-  const step = state.step;
-  if(step==='unlock') renderUnlock();
-  else if(step==='gemini') renderGeminiGate();
-  else if(step==='brief') renderBrief();
-  else if(step==='grille') renderGrille();
-  else if(step==='result') renderResult();
-  else renderUnlock();
+var state={niveau:'',profil:'',brief:'',prompt:'',maitres:[]};
+var app=document.getElementById('app');
+
+function render(h){app.innerHTML=h;window.scrollTo(0,0);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function detectProfil(txt){
+  var t=txt.toLowerCase();
+  var scores={};
+  Object.keys(PROFILS).forEach(function(k){scores[k]=0;PROFILS[k].mots.forEach(function(m){if(t.indexOf(m)!==-1)scores[k]++;});});
+  var best='AUTOMATISEUR',max=-1;
+  Object.keys(scores).forEach(function(k){if(scores[k]>max){max=scores[k];best=k;}});
+  return best;
 }
 
-function renderUnlock() {
-  render(`<div style="margin-top:60px;"><div class="eyebrow">Moment Troc · Studio</div><h1>Clé d'Accès</h1><p class="sub">Entre la clé fournie.</p><input id="key-input" type="text" placeholder="MT-2024X..." autocomplete="off" style="text-transform:uppercase;"><div id="gate-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateMoment()">Entrer →</button></div>`);
-}
-window.validateMoment = function() {
-  const k = document.getElementById('key-input').value.trim().toUpperCase();
-  if(VALID_KEYS.includes(k)) { setMomentKey(k); state.step='gemini'; renderStudioFlow(); }
-  else { document.getElementById('gate-err').textContent='Clé invalide.'; }
-};
-
-function renderGeminiGate() {
-  render(`<div style="margin-top:60px;"><div class="eyebrow">Étape 2/2</div><h1>Clé API Gemini</h1><p class="sub">Gratuit sur <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p><input id="gemini-input" type="password" placeholder="AIza..." autocomplete="off"><div id="gemini-err" style="min-height:20px;color:var(--err);font-size:0.8rem;margin-top:8px;"></div><button class="btn btn-primary" onclick="validateGemini()">Activer →</button></div>`);
-}
-window.validateGemini = async function() {
-  const k = document.getElementById('gemini-input').value.trim();
-  if(!k.startsWith('AIza')||k.length<30) { document.getElementById('gemini-err').textContent='Clé invalide.'; return; }
-  try {
-    const test = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${k}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:'OK'}]}],generationConfig:{maxOutputTokens:3}})
-    });
-    if(!test.ok) throw new Error('Clé rejetée');
-    setGeminiKey(k); state.step='brief'; renderStudioFlow();
-  } catch(e) { document.getElementById('gemini-err').textContent='Clé rejetée.'; }
-};
-
-function renderBrief() {
-  render(`<div class="eyebrow">Brief</div><h1>Décharge ton business</h1>
-    <div class="field"><div class="flabel">Ton business</div><textarea id="biz" rows="2" placeholder="Ex: Formations pour freelances...">${state.biz}</textarea></div>
-    <div class="field"><div class="flabel">La tension client</div><textarea id="tension" rows="2" placeholder="Ex: Il croit que vendre est un don...">${state.tension}</textarea></div>
-    <div class="field"><div class="flabel">3 anecdotes (Prénom, échec, résultat)</div>
-    <textarea id="anecdote1" rows="2" placeholder="Anecdote 1">${state.anecdotes[0]||''}</textarea>
-    <textarea id="anecdote2" rows="2" placeholder="Anecdote 2" style="margin-top:8px;">${state.anecdotes[1]||''}</textarea>
-    <textarea id="anecdote3" rows="2" placeholder="Anecdote 3" style="margin-top:8px;">${state.anecdotes[2]||''}</textarea></div>
-    <div class="field"><div class="flabel">Ton offre</div><textarea id="offre" rows="2" placeholder="Ex: Formation rédaction persuasive...">${state.offre}</textarea></div>
-    <button class="btn btn-primary" onclick="goToGrille()">Générer la grille →</button>
-    <div id="brief-err" class="err-msg"></div>`);
+function selectMaitres(profil){
+  return PROFILS[profil].maitres.map(function(id){return MAITRES[id];});
 }
 
-window.goToGrille = function() {
-  const biz = document.getElementById('biz').value.trim();
-  const tension = document.getElementById('tension').value.trim();
-  const a1 = document.getElementById('anecdote1').value.trim();
-  const a2 = document.getElementById('anecdote2').value.trim();
-  const a3 = document.getElementById('anecdote3').value.trim();
-  const offre = document.getElementById('offre').value.trim();
-  if(!biz||!tension||!a1||!offre) { document.getElementById('brief-err').textContent='Remplis tous les champs.'; return; }
-  state.biz=biz; state.tension=tension; state.anecdotes=[a1,a2,a3]; state.offre=offre;
-  state.profil = detectProfil(tension);
-  // Grille inspirée de la structure thèmes/angles validée
-  state.grille = [
-    {theme:'LE PROFIL', angles:['Il ne veut pas comprendre','Il calcule tout','Il achète l\'image']},
-    {theme:'L\'ORGANE', angles:['Le chaos','Le calcul','L\'image']},
-    {theme:'LE DÉCLENCHEUR', angles:['La peur','Le désir','L\'urgence']},
-  ];
-  state.step='grille';
-  renderStudioFlow();
-};
-
-function renderGrille() {
-  let html = `<div class="eyebrow">Grille</div><h1>Choisis ton angle</h1><p class="sub">Profil détecté : ${state.profil}</p>`;
-  state.grille.forEach(th => {
-    html += `<h3 style="margin-top:20px;">${th.theme}</h3>`;
-    th.angles.forEach(ang => {
-      html += `<div class="angle-card" onclick="selectAngle('${th.theme}','${ang}')">${ang}</div>`;
-    });
-  });
-  html += `<button class="btn btn-primary" id="btn-post" onclick="generateStudioPost()" disabled>Générer le post →</button>`;
-  render(html);
-}
-
-window.selectAngle = function(theme, angle) {
-  state.selectedAngle = {theme, angle};
-  document.querySelectorAll('.angle-card').forEach(c=>c.classList.remove('selected'));
-  event.target.classList.add('selected');
-  document.getElementById('btn-post').disabled = false;
-};
-
-window.generateStudioPost = async function() {
-  const {theme, angle} = state.selectedAngle;
-  const anecdote = state.anecdotes[Math.floor(Math.random()*3)];
-  const ateliers = ['Miroir','Forge','Closing'];
-  const atelier = ateliers[Math.floor(Math.random()*3)];
-  const maitres = ['Will Aime','Itachi','Hannibal','Youssoupha','Scofield','Frank','Tyrion'];
-  const maitre = maitres[Math.floor(Math.random()*7)];
-  render(`<div class="eyebrow">Génération</div><h1>L'agent travaille...</h1><div class="card"><p>Thème : ${theme} / ${angle}</p><p>Profil : ${state.profil} | Atelier : ${atelier} | Maître : ${maitre}</p><div class="progress"><div class="progress-fill"></div></div></div>`);
-  try {
-    const post = await generatePost(state.biz, state.tension, anecdote, state.offre, state.profil, atelier, maitre);
-    state.currentPost = post;
-    state.step='result';
-    renderStudioFlow();
-  } catch(e) {
-    app.innerHTML+=`<div class="err-msg">Erreur : ${e.message}</div>`;
+// ═══ COPIER — marche sur tous les mobiles ═══
+function copyText(txt,btnId){
+  var btn=document.getElementById(btnId);
+  var ok=function(){if(btn){btn.textContent='Copie !';setTimeout(function(){btn.textContent='Copier le prompt';},2500);}};
+  var fail=function(){
+    // Methode de secours : textarea temporaire
+    var ta=document.createElement('textarea');
+    ta.value=txt;
+    ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();ta.select();
+    try{var r=document.execCommand('copy');if(r)ok();}catch(e){}
+    document.body.removeChild(ta);
+  };
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(ok).catch(fail);
+  } else {
+    fail();
   }
-};
-
-function renderResult() {
-  render(`<div class="eyebrow">Post généré</div><div class="card"><span class="tag gold">${state.profil}</span><div class="post-content">${esc(state.currentPost)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(state.currentPost)},this)">Copier</button><button class="btn btn-ghost" onclick="state.step='grille';renderStudioFlow();">Autre angle</button><button class="btn btn-primary" onclick="saveToArsenal()">Sauvegarder</button></div></div>`);
 }
 
-// ═══════════════════════════════════════ DÉCONSTRUCTION ═══════════════════════════
-function renderDC() {
-  render(`<div class="eyebrow">Déconstruction</div><h1>L'agent dissèque</h1><p class="sub">Colle un post.</p>
-    <textarea id="dc-post" rows="8" placeholder="Colle ici..."></textarea>
-    <textarea id="dc-contexte" rows="2" placeholder="Contexte..." style="margin-top:12px;"></textarea>
-    <button class="btn btn-primary" onclick="runDC()">Autopsie →</button>
-    <div id="dc-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
-    <div id="dc-error" class="off"></div><div id="dc-result" class="off"></div>`);
-}
-window.runDC = async function() {
-  const post = document.getElementById('dc-post').value.trim();
-  if (!post || post.length<30) return;
-  document.getElementById('dc-prog').classList.remove('off');
-  document.getElementById('dc-result').classList.add('off');
-  try {
-    const raw = await callGeminiLite(`Analyse ce post en 3 phrases : ${post.slice(0,1000)}`);
-    const contre = await callGeminiLite(`Contre-angle pour : "${post.slice(0,800)}". T1-T2-Suture-T3-T4.`);
-    document.getElementById('dc-prog').classList.add('off');
-    document.getElementById('dc-result').classList.remove('off');
-    document.getElementById('dc-result').innerHTML = `<div class="card"><div class="eyebrow">Rapport</div><p>${esc(raw)}</p></div><div class="card gold"><div class="eyebrow">Contre-Angle</div><div class="post-content">${esc(contre)}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(contre)},this)">Copier</button></div>`;
-  } catch(e) { document.getElementById('dc-error').innerHTML=`<div class="err-msg">${e.message}</div>`; document.getElementById('dc-error').classList.remove('off'); }
-};
+// ═══ ÉCRANS ═══
 
-// ═══════════════════════════════════════ TROC KIT ═══════════════════════════
-let tkProfil = 'AUTOMATISEUR', tkMode = 'désir';
-function renderTK() {
-  const profils = ['AUTOMATISEUR','OPTIMISEUR_VALEUR','OPTIMISEUR_PRIX','ÉLÉVATEUR','LIBÉRATEUR'];
-  render(`<div class="eyebrow">Troc Kit</div><h1>Le script</h1>
-    <textarea id="tk-offre" rows="3" placeholder="Ton offre..."></textarea>
-    <div class="field"><div class="flabel">Profil</div><div class="sgrid">${profils.map(p=>`<div class="sitem ${tkProfil===p?'on':''}" onclick="tkProfil='${p}';renderTK();">${p.replace('_',' ')}</div>`).join('')}</div></div>
-    <div class="field"><div class="flabel">Mode</div><div class="sgrid c3"><div class="sitem ${tkMode==='désir'?'on':''}" onclick="tkMode='désir';renderTK();">🟢 Désir</div><div class="sitem ${tkMode==='peur'?'on':''}" onclick="tkMode='peur';renderTK();">🔴 Peur</div></div></div>
-    <button class="btn btn-primary" onclick="runTK()">Générer →</button>
-    <div id="tk-prog" class="off"><div class="progress"><div class="progress-fill"></div></div></div>
-    <div id="tk-result" class="off"></div>`);
+function showKey(){
+  render(
+    '<span class="eyebrow">Moment Troc · Studio V4</span>'+
+    '<h1>Acces</h1>'+
+    '<p class="sub">Entre ta cle d\'acces pour activer le Studio.</p>'+
+    '<input type="password" id="kf" placeholder="MT-XXXX-XXXX" autocomplete="off">'+
+    '<div id="kerr" class="err off">Cle invalide.</div>'+
+    '<button class="btn btn-primary" onclick="checkKey()">Activer</button>'
+  );
 }
-window.runTK = async function() {
-  const offre = document.getElementById('tk-offre').value.trim();
-  if(!offre) return;
-  document.getElementById('tk-prog').classList.remove('off');
-  try {
-    const raw = await callGeminiLite(`Offre : "${offre}". Profil : ${tkProfil}. Génère 4 scripts (---SEP---) : Approche, Valeur, Relance, Objection.`);
-    document.getElementById('tk-prog').classList.add('off');
-    document.getElementById('tk-result').classList.remove('off');
-    document.getElementById('tk-result').innerHTML = raw.split('---SEP---').map(s=>`<div class="card"><div class="post-content">${esc(s.trim())}</div><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(s.trim())},this)">Copier</button></div>`).join('');
-  } catch(e) { document.getElementById('tk-prog').classList.add('off'); }
-};
 
-// ═══════════════════════════════════════ ARSENAL ═══════════════════════════
-window.saveToArsenal = function() {
-  if(!state.currentPost) return;
-  let day = null;
-  for(let d=2; d<=30; d+=2) { if(!state.arsenalPosts[d]){ day=d; break; } }
-  if(!day){ alert('Mois plein.'); return; }
-  state.arsenalPosts[day] = { text:state.currentPost, profil:state.profil, savedAt:Date.now() };
-  localStorage.setItem('mt_arsenal_posts', JSON.stringify(state.arsenalPosts));
-  alert('Sauvegardé au jour '+day);
-};
-function renderArsenal() {
-  let h = '<div class="eyebrow">Arsenal</div><h1>Calendrier</h1><div class="cal">';
-  for(let d=1; d<=30; d++) {
-    const p = state.arsenalPosts[d];
-    if(d%2===0) {
-      if(p) h += `<div class="cal-day set" onclick="viewPost(${d})"><span class="num">J${d}</span></div>`;
-      else h += `<div class="cal-day placeholder" onclick="viewPost(${d})"><span class="num">+</span></div>`;
-    } else h += `<div class="cal-day off"><span class="num">J${d}</span></div>`;
+function checkKey(){
+  var k=document.getElementById('kf').value.trim().toUpperCase();
+  if(KEYS.indexOf(k)===-1){document.getElementById('kerr').classList.remove('off');return;}
+  localStorage.setItem('mt_key',k);
+  document.getElementById('main-nav').style.display='flex';
+  showStudio();
+}
+
+function showStudio(){
+  render(
+    '<span class="eyebrow">Etape 1 · Brief</span>'+
+    '<h1>Matiere</h1>'+
+    '<p class="sub">Decris ton business, ton produit, tes clients. Ajoute des anecdotes reelles si tu en as.</p>'+
+    '<textarea id="bf" rows="7" placeholder="Ex : Je vends du jus de canne a sucre a Brazzaville. Mes clients sont des travailleurs et des etudiants. Un jour j\'ai offert un verre a un client qui hesitait...">'+(state.brief||'')+'</textarea>'+
+    '<div style="font-family:Space Mono,monospace;font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--ink-mid);margin:20px 0 8px;">Niveau actuel</div>'+
+    '<p class="sub" style="margin-bottom:10px;">Ou en es-tu avec ton audience ?</p>'+
+    '<div class="niveau-grid">'+
+    [['Masque','Mon audience ne me connait pas encore'],
+     ['Declencheur','Ils me voient mais ne comprennent pas'],
+     ['Fissure','Ils me reconnaissent, pas encore acheteurs'],
+     ['Reconstruction','Ils sont prets, je veux convertir']].map(function(n){
+      return '<div class="niv'+(state.niveau===n[0]?' on':'')+'" onclick="selN(\''+n[0]+'\')" data-n="'+n[0]+'">'+
+        '<span class="nt">'+n[0]+'</span><span class="nd">'+n[1]+'</span></div>';
+    }).join('')+
+    '</div>'+
+    '<div id="berr" class="err off">Decris ton business et choisis ton niveau.</div>'+
+    '<button class="btn btn-primary" onclick="runDiag()">Diagnostic</button>'
+  );
+}
+
+function selN(n){
+  state.niveau=n;
+  document.querySelectorAll('.niv').forEach(function(el){el.classList.toggle('on',el.getAttribute('data-n')===n);});
+}
+
+function runDiag(){
+  var bf=document.getElementById('bf').value.trim();
+  if(bf.length<20||!state.niveau){document.getElementById('berr').classList.remove('off');return;}
+  state.brief=bf;
+  state.profil=detectProfil(bf);
+  state.maitres=selectMaitres(state.profil);
+  showDiag();
+}
+
+function showDiag(){
+  var p=PROFILS[state.profil];
+  var mh=state.maitres.map(function(m,i){
+    return '<div class="maitre-preview">'+
+      '<span class="mp-name">Post '+(i+1)+' — '+m.n+'</span>'+
+      '<span class="mp-il">'+m.il+' · Impact : '+m.im+'</span>'+
+      '<span class="mp-desc">'+m.desc+'</span></div>';
+  }).join('');
+  render(
+    '<span class="eyebrow">Etape 2 · Diagnostic</span>'+
+    '<h1>Analyse</h1>'+
+    '<div class="card">'+
+    '<span class="card-label">Profil detecte</span>'+
+    '<div class="diag-row"><span class="diag-key">Profil</span><span class="diag-val">'+state.profil.replace(/_/g,' ')+'</span></div>'+
+    '<div class="diag-row"><span class="diag-key">Organe</span><span class="diag-val">'+p.organe+'</span></div>'+
+    '<div class="diag-row"><span class="diag-key">Tension</span><span class="diag-val">'+p.tension+'</span></div>'+
+    '<div class="diag-row"><span class="diag-key">Niveau</span><span class="diag-val">'+state.niveau+'</span></div>'+
+    '</div>'+
+    '<div style="font-family:Space Mono,monospace;font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--ink-mid);margin:16px 0 10px;">3 Maitres selectionnes</div>'+
+    mh+
+    '<button class="btn btn-primary" onclick="genPrompt()">Generer le prompt</button>'+
+    '<button class="btn btn-ghost" onclick="showStudio()">Modifier le brief</button>'
+  );
+}
+
+function genPrompt(){
+  var p=PROFILS[state.profil];
+  var m=state.maitres;
+  var t4n='';
+  if(state.niveau==='Masque')t4n='Question ouverte. Une porte. Jamais un ordre.';
+  else if(state.niveau==='Declencheur')t4n='Constat qui brule. Le lecteur sait deja.';
+  else if(state.niveau==='Fissure')t4n='Revelation. Ce qu\'il refusait de voir.';
+  else t4n='Choix binaire. Deux portes. Les deux menent au meme endroit.';
+
+  var prompt=
+'Tu es un copywriter neurologique. Tu executes. Tu ecris.\n'+
+'Tu n\'expliques pas. Tu n\'introduis pas.\n\n'+
+'BUSINESS :\n'+state.brief+'\n\n'+
+'PROFIL CIBLE : '+state.profil.replace(/_/g,' ')+' — '+p.organe+'\n'+
+'Tension : "'+p.tension+'"\n'+
+'Desir cache : '+p.desir+'\n'+
+'Ne jamais nommer ce desir. Le montrer en action.\n\n'+
+'NIVEAU TUNNEL : '+state.niveau+'\n\n'+
+'3 POSTS — 3 MAITRES\n\n'+
+'POST 1 — MAITRE : '+m[0].n.toUpperCase()+' — '+m[0].il+'\n'+
+'Impact : '+m[0].im+'\n'+
+m[0].desc+'\n\n'+
+'POST 2 — MAITRE : '+m[1].n.toUpperCase()+' — '+m[1].il+'\n'+
+'Impact : '+m[1].im+'\n'+
+m[1].desc+'\n\n'+
+'POST 3 — MAITRE : '+m[2].n.toUpperCase()+' — '+m[2].il+'\n'+
+'Impact : '+m[2].im+'\n'+
+m[2].desc+'\n\n'+
+'STRUCTURE POUR CHAQUE POST :\n\n'+
+'T1 : Vue de l\'interieur. Ce que l\'auteur vit exactement.\n'+
+'Le Maitre imprime sa mecanique si son impact est T1.\n\n'+
+'T2 : Une seule phrase. Elle dechire une certitude.\n'+
+'Le Maitre imprime sa mecanique si son impact est T2.\n\n'+
+'SUTURE : Maximum 8 mots. Aucun connecteur. Aucune morale.\n'+
+'Un fait brut. Suggere le desir cache sans le nommer.\n\n'+
+'T3 : Sequence de faits. Une ligne par fait. Pas d\'explication.\n'+
+'Le Maitre imprime sa mecanique si son impact est T3.\n\n'+
+'T4 : '+t4n+'\n'+
+'Le Maitre imprime sa mecanique si son impact est T4.\n\n'+
+'REGLES ABSOLUES :\n'+
+'- Tutoiement strict\n'+
+'- Zero emoji, zero hashtag\n'+
+'- Phrases maximum 12 mots\n'+
+'- Jamais : donc, ainsi, par consequent\n'+
+'- Pas d\'anecdote inventee\n'+
+'- L\'auteur parle depuis l\'interieur de son experience\n'+
+'- 3 posts avec mecaniques differentes — pas le meme film\n\n'+
+'FORMAT DE SORTIE OBLIGATOIRE :\n'+
+'Chaque post doit etre clairement separe.\n'+
+'Chaque section labellee : T1 / T2 / SUTURE / T3 / T4\n'+
+'Apres chaque post, 3 commentaires :\n'+
+'C1 : fait concret qui approfondit T3\n'+
+'C2 : objection silencieuse retournee sans la nier\n'+
+'C3 : porte naturelle vers l\'action — jamais "achete" ou "contacte"\n\n'+
+'Genere les 3 posts complets dans l\'ordre.\n'+
+'Arrete apres les 3.\n'+
+'Demande : "Ajustements ou on continue ?"';
+
+  state.prompt=prompt;
+  showPrompt();
+}
+
+function showPrompt(){
+  render(
+    '<span class="eyebrow">Etape 3 · Prompt</span>'+
+    '<h1>Pret</h1>'+
+    '<p class="sub">Copie ce prompt. Colle-le dans Claude.ai ou ChatGPT.</p>'+
+    '<div class="prompt-box" id="promptbox">'+esc(state.prompt)+'</div>'+
+    '<button class="btn btn-primary" id="copybtn" onclick="copyText(state.prompt,\'copybtn\')">Copier le prompt</button>'+
+    '<div class="divider"></div>'+
+    '<div style="font-family:Space Mono,monospace;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--ink-mid);margin-bottom:8px;">Ouvrir l\'IA</div>'+
+    '<div class="btn-row">'+
+    '<a href="https://claude.ai/new" target="_blank" class="btn btn-primary">Claude.ai</a>'+
+    '<a href="https://chatgpt.com" target="_blank" class="btn btn-ghost">ChatGPT</a>'+
+    '</div>'+
+    '<div class="divider"></div>'+
+    '<div class="btn-row">'+
+    '<button class="btn btn-ghost" onclick="showDiag()">Revoir diagnostic</button>'+
+    '<button class="btn btn-ghost" onclick="showStudio()">Nouveau brief</button>'+
+    '</div>'+
+    '<button class="btn btn-primary" style="margin-top:16px;" onclick="goNav(\'arsenal\')">Aller a l\'Arsenal</button>'
+  );
+}
+
+function showArsenal(){
+  var posts=JSON.parse(localStorage.getItem('mt_arsenal')||'[]');
+  var h='<span class="eyebrow">Arsenal</span>'+
+    '<h1>Posts</h1>'+
+    '<p class="sub">Colle tes posts generes ici. Ils sont sauvegardes.</p>'+
+    '<textarea id="apaste" rows="5" placeholder="Colle un post ici..." style="margin-bottom:0;"></textarea>'+
+    '<button class="btn btn-primary" onclick="savePost()">Sauvegarder</button>'+
+    '<div class="divider"></div>';
+  if(posts.length===0){
+    h+='<p class="sub" style="text-align:center;padding:16px 0;">Aucun post sauvegarde.</p>';
+  } else {
+    posts.forEach(function(p,i){
+      h+='<div class="arsenal-item">'+
+        '<div class="am">'+p.date+' · '+(p.profil||'').replace(/_/g,' ')+'</div>'+
+        '<div class="at">'+esc(p.text)+'</div>'+
+        '<button class="ad" onclick="delPost('+i+')">Suppr.</button></div>';
+    });
   }
-  h += '</div><div id="arsenal-detail" class="day-detail off"></div>';
   render(h);
 }
-window.viewPost = function(day) {
-  const p = state.arsenalPosts[day];
-  const el = document.getElementById('arsenal-detail');
-  if(!p) { el.innerHTML = `<div class="eyebrow">Jour ${day}</div><p>Vide.</p>`; el.classList.remove('off'); return; }
-  el.innerHTML = `<div class="eyebrow">Jour ${day}</div><div class="preview">${esc(p.text)}</div><div class="actions"><button class="btn btn-ghost" onclick="copyTxt(${JSON.stringify(p.text)},this)">Copier</button></div>`;
-  el.classList.remove('off');
-};
 
-// --- INITIALISATION ---
-window.onload = function() {
-  const mk = getMomentKey();
-  const gk = getGeminiKey();
-  if(mk && VALID_KEYS.includes(mk) && gk && gk.length>30) {
-    state.step='brief';
-  } else if(mk && VALID_KEYS.includes(mk)) {
-    state.step='gemini';
-  } else {
-    state.step='unlock';
-  }
-  renderStudioFlow();
+function savePost(){
+  var txt=document.getElementById('apaste').value.trim();
+  if(txt.length<10)return;
+  var posts=JSON.parse(localStorage.getItem('mt_arsenal')||'[]');
+  posts.unshift({text:txt,date:new Date().toLocaleDateString('fr-FR'),profil:state.profil});
+  localStorage.setItem('mt_arsenal',JSON.stringify(posts));
+  document.getElementById('apaste').value='';
+  showArsenal();
+}
+
+function delPost(i){
+  var posts=JSON.parse(localStorage.getItem('mt_arsenal')||'[]');
+  posts.splice(i,1);
+  localStorage.setItem('mt_arsenal',JSON.stringify(posts));
+  showArsenal();
+}
+
+function goNav(s){
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  if(s==='studio'){document.getElementById('nb-studio').classList.add('on');showStudio();}
+  else if(s==='arsenal'){document.getElementById('nb-arsenal').classList.add('on');showArsenal();}
+}
+
+window.onload=function(){
+  var k=localStorage.getItem('mt_key');
+  if(k&&KEYS.indexOf(k)!==-1){document.getElementById('main-nav').style.display='flex';showStudio();}
+  else{showKey();}
 };
 </script>
 </body>
